@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int         @id @default(autoincrement())
+  email        String?     @unique
+  firstName    String?
+  lastName     String?
+  userStatus   UserStatus? @relation(fields: [userStatusId], references: [id])
+  userStatusId Int?        @unique
+  userType     UserType?   @relation(fields: [userTypeId], references: [id])
+  userTypeId   Int?        @unique
+  company      Company?
+  phone        String?
+  instagram    String?
+  tiktok       String?
+  position     Position?   @relation(fields: [positionId], references: [id])
+  positionId   Int?        @unique
+  client       Client[]
+  address      Address[]
+  Project      Project[]
+  password     String?
+  updatedAt    DateTime?   @updatedAt
+  createdAt    DateTime?   @default(now())
+  membership   Membership? @relation(fields: [membershipId], references: [id])
+  membershipId Int?        @unique
+  Contract     Contract?
+}
+
+model UserStatus {
+  id         Int             @id @default(autoincrement())
+  userStatus userStatusList?
+  User       User?
+}
+
+enum userStatusList {
+  active
+  inactive
+}
+
+model UserType {
+  id       Int           @id @default(autoincrement())
+  userType userTypeList?
+  user     User?
+}
+
+enum userTypeList {
+  brand
+  showroom
+  stylist
+  talent
+  traffik
+}
+
+model Company {
+  id           Int          @id @default(autoincrement())
+  company      String?      @unique
+  employee     User?        @relation(fields: [employeeId], references: [id])
+  employeeId   Int?         @unique
+  team         Position[]
+  itemBrand    Item[]       @relation("ItemBrand")
+  itemShowroom Item[]       @relation("ItemShowroom")
+  client       Client[]     @relation("provider")
+  project      Project[]
+  membership   Membership[]
+  contract     Contract[]
+  addresses    Address[]
+  createdAt    DateTime?    @default(now())
+}
+
+model Membership {
+  id             Int            @id @default(autoincrement())
+  membershipType MembershipType
+  company        Company?       @relation(fields: [companyId], references: [id])
+  companyId      Int?
+  member         User?
+}
+
+enum MembershipType {
+  mem1
+  mem2
+  mem3
+}
+
+model Contract {
+  id        Int       @id @default(autoincrement())
+  legalName String?   @unique
+  startDate DateTime
+  endDate   DateTime
+  company   Company?  @relation(fields: [companyId], references: [id])
+  companyId Int?
+  member    User?     @relation(fields: [memberId], references: [id])
+  memberId  Int?      @unique
+  address   Address?  @relation(fields: [addressId], references: [id])
+  addressId Int?      @unique
+  createdAt DateTime? @default(now())
+}
+
+model Position {
+  id        Int           @id @default(autoincrement())
+  position  PositionType?
+  company   Company?      @relation(fields: [companyId], references: [id])
+  User      User?
+  companyId Int?
+}
+
+enum PositionType {
+  influencer
+  model
+  pressOffice
+  pressOfficeDirector
+  stylist
+  stylistAssistant
+}
+
+model Client {
+  id         Int       @id @default(autoincrement())
+  talent     User?     @relation(fields: [talentId], references: [id])
+  talentId   Int?
+  provider   Company?  @relation("provider", fields: [providerId], references: [id], map: "provider_providerId_fkey")
+  providerId Int?
+  project    Project[]
+  createdAt  DateTime? @default(now())
+}
+
+model Address {
+  id        Int       @id @default(autoincrement())
+  address1  String?
+  address2  String?
+  city      String?
+  state     String?
+  zip       String?
+  country   String?
+  user      User?     @relation(fields: [userId], references: [id])
+  userId    Int?
+  company   Company?  @relation(fields: [companyId], references: [id])
+  companyId Int?
+  createdAt DateTime? @default(now())
+  contract  Contract?
+}
+
+model Project {
+  id            Int           @id @default(autoincrement())
+  projectStatus ProjectStatus
+  event         String
+  stylist       User?         @relation(fields: [stylistId], references: [id])
+  stylistId     Int?
+  talent        Client?       @relation(fields: [talentId], references: [id])
+  talentId      Int?
+  loanDate      DateTime
+  fittingDate   DateTime?
+  eventDate     DateTime?
+  returnDate    DateTime
+  pull          Pull?         @relation(fields: [pullId], references: [id])
+  pullId        Int?          @unique
+  rating        Int?
+  Company       Company?      @relation(fields: [companyId], references: [id])
+  companyId     Int?
+  createdAt     DateTime?     @default(now())
+}
+
+enum ProjectStatus {
+  Open
+  Close
+}
+
+model Item {
+  id               Int           @id @default(autoincrement())
+  barcode          String?
+  createdAt        DateTime      @default(now())
+  brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])
+  brandId          Int?
+  showroom         Company?      @relation("ItemShowroom", fields: [showroomId], references: [id])
+  showroomId       Int?
+  collection       Collection?   @relation(fields: [collectionId], references: [id])
+  collectionId     Int?          @unique
+  season           String?
+  style            String?
+  type             Type?         @relation(fields: [typeId], references: [id])
+  typeId           Int?          @unique
+  size             String?
+  color            String?
+  location         String?
+  availability     Availability? @relation(fields: [availabilityId], references: [id])
+  availabilityId   Int?          @unique
+  condition        Int?
+  comment          String?
+  replacementValue Int?
+  picture          Bytes?
+  pull             Pull[]
+  retailValue      Int?
+}
+
+model Collection {
+  id         Int             @id @default(autoincrement())
+  collection collectionList?
+  Item       Item?
+}
+
+enum collectionList {
+  Womenswear
+  Menswear
+  Unisex
+}
+
+model Type {
+  id   Int      @id @default(autoincrement())
+  type typeList
+  Item Item?
+}
+
+enum typeList {
+  Accessories
+  Bags
+  Clothing
+  Footwear
+}
+
+model Availability {
+  id           Int              @id @default(autoincrement())
+  availability availabilityList
+  Item         Item?
+}
+
+enum availabilityList {
+  Available
+  Loaned
+  Maintenance
+  Gifted
+  Lost
+}
+
+model Pull {
+  id         Int          @id @default(autoincrement())
+  idItem     Item?        @relation(fields: [barcodeId], references: [id])
+  barcodeId  Int?
+  Project    Project?
+  PullUpdate PullUpdate[]
+  createdAt  DateTime?    @default(now())
+}
+
+model PullUpdate {
+  id        Int       @id @default(autoincrement())
+  pull      Pull?     @relation(fields: [pullId], references: [id])
+  pullId    Int?
+  ready     Int?
+  out       Int?
+  returned  Int?
+  worn      Int?
+  assets    Bytes?
+  createdAt DateTime? @default(now())
+}
+
+model Lambda {
+  id        Int       @id @default(autoincrement())
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+}
