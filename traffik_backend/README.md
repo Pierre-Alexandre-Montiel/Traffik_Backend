@@ -58,6 +58,28 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Docker
+
+```bash
+
+# launch docker compose
+$ docker compuse up
+$ docker run -d -e POSTGRES_DB=traffik -e POSTGRES_PASSWORD=pablo -e POSTGRES_USER=postgres -p "5432:5432" postgres
+
+```
+## Prisma
+
+```bash
+# Uploas schema in the DB
+$ npx prisma migrate dev --name init
+
+# Open the web interface
+$ npx prisma studio
+
+# Check the DB connection
+$ npx prisma db pull
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

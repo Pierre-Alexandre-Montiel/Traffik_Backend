@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int         @id @default(autoincrement())
+  email        String?     @unique
+  firstName    String?
+  lastName     String?
+  userStatusId Int?        @unique
+  userTypeId   Int?        @unique
+  phone        String?
+  instagram    String?
+  tiktok       String?
+  positionId   Int?        @unique
+  password     String?
+  updatedAt    DateTime?   @updatedAt
+  createdAt    DateTime?   @default(now())
+  membershipId Int?        @unique
+  address      Address[]
+  client       Client[]
+  company      Company?
+  Contract     Contract?
+  Project      Project[]
+  membership   Membership? @relation(fields: [membershipId], references: [id])
+  position     Position?   @relation(fields: [positionId], references: [id])
+  userStatus   UserStatus? @relation(fields: [userStatusId], references: [id])
+  userType     UserType?   @relation(fields: [userTypeId], references: [id])
+}
+
+model UserStatus {
+  id         Int             @id @default(autoincrement())
+  userStatus userStatusList?
+  User       User?
+}
+
+model UserType {
+  id       Int           @id @default(autoincrement())
+  userType userTypeList?
+  user     User?
+}
+
+model Company {
+  id           Int          @id @default(autoincrement())
+  company      String?      @unique
+  employeeId   Int?         @unique
+  createdAt    DateTime?    @default(now())
+  addresses    Address[]
+  client       Client[]     @relation("provider")
+  employee     User?        @relation(fields: [employeeId], references: [id])
+  contract     Contract[]
+  itemBrand    Item[]       @relation("ItemBrand")
+  itemShowroom Item[]       @relation("ItemShowroom")
+  membership   Membership[]
+  team         Position[]
+  project      Project[]
+}
+
+model Membership {
+  id             Int            @id @default(autoincrement())
+  membershipType MembershipType
+  companyId      Int?
+  company        Company?       @relation(fields: [companyId], references: [id])
+  member         User?
+}
+
+model Contract {
+  id        Int       @id @default(autoincrement())
+  legalName String?   @unique
+  startDate DateTime
+  endDate   DateTime
+  companyId Int?
+  memberId  Int?      @unique
+  addressId Int?      @unique
+  createdAt DateTime? @default(now())
+  address   Address?  @relation(fields: [addressId], references: [id])
+  company   Company?  @relation(fields: [companyId], references: [id])
+  member    User?     @relation(fields: [memberId], references: [id])
+}
+
+model Position {
+  id        Int           @id @default(autoincrement())
+  position  PositionType?
+  companyId Int?
+  company   Company?      @relation(fields: [companyId], references: [id])
+  User      User?
+}
+
+model Client {
+  id         Int       @id @default(autoincrement())
+  talentId   Int?
+  providerId Int?
+  createdAt  DateTime? @default(now())
+  talent     User?     @relation(fields: [talentId], references: [id])
+  provider   Company?  @relation("provider", fields: [providerId], references: [id], map: "provider_providerId_fkey")
+  project    Project[]
+}
+
+model Address {
+  id        Int       @id @default(autoincrement())
+  address1  String?
+  address2  String?
+  city      String?
+  state     String?
+  zip       String?
+  country   String?
+  userId    Int?
+  companyId Int?
+  createdAt DateTime? @default(now())
+  company   Company?  @relation(fields: [companyId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
+  contract  Contract?
+}
+
+model Project {
+  id            Int           @id @default(autoincrement())
+  projectStatus ProjectStatus
+  event         String
+  stylistId     Int?
+  talentId      Int?
+  loanDate      DateTime
+  fittingDate   DateTime?
+  eventDate     DateTime?
+  returnDate    DateTime
+  pullId        Int?          @unique
+  rating        Int?
+  companyId     Int?
+  createdAt     DateTime?     @default(now())
+  Company       Company?      @relation(fields: [companyId], references: [id])
+  pull          Pull?         @relation(fields: [pullId], references: [id])
+  stylist       User?         @relation(fields: [stylistId], references: [id])
+  talent        Client?       @relation(fields: [talentId], references: [id])
+}
+
+model Item {
+  id               Int           @id @default(autoincrement())
+  barcode          String?
+  createdAt        DateTime      @default(now())
+  brandId          Int?
+  showroomId       Int?
+  collectionId     Int?          @unique
+  season           String?
+  style            String?
+  typeId           Int?          @unique
+  size             String?
+  color            String?
+  location         String?
+  availabilityId   Int?          @unique
+  condition        Int?
+  comment          String?
+  replacementValue Int?
+  picture          Bytes?
+  retailValue      Int?
+  availability     Availability? @relation(fields: [availabilityId], references: [id])
+  brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])
+  collection       Collection?   @relation(fields: [collectionId], references: [id])
+  showroom         Company?      @relation("ItemShowroom", fields: [showroomId], references: [id])
+  type             Type?         @relation(fields: [typeId], references: [id])
+  pull             Pull[]
+}
+
+model Collection {
+  id         Int             @id @default(autoincrement())
+  collection collectionList?
+  Item       Item?
+}
+
+model Type {
+  id   Int      @id @default(autoincrement())
+  type typeList
+  Item Item?
+}
+
+model Availability {
+  id           Int              @id @default(autoincrement())
+  availability availabilityList
+  Item         Item?
+}
+
+model Pull {
+  id         Int          @id @default(autoincrement())
+  barcodeId  Int?
+  createdAt  DateTime?    @default(now())
+  Project    Project?
+  idItem     Item?        @relation(fields: [barcodeId], references: [id])
+  PullUpdate PullUpdate[]
+}
+
+model PullUpdate {
+  id        Int       @id @default(autoincrement())
+  pullId    Int?
+  ready     Int?
+  out       Int?
+  returned  Int?
+  worn      Int?
+  assets    Bytes?
+  createdAt DateTime? @default(now())
+  pull      Pull?     @relation(fields: [pullId], references: [id])
+}
+
+model Lambda {
+  id        Int       @id @default(autoincrement())
+  updatedAt DateTime? @updatedAt
+  createdAt DateTime? @default(now())
+}
+
+enum userStatusList {
+  active
+  inactive
+}
+
+enum userTypeList {
+  brand
+  showroom
+  stylist
+  talent
+  traffik
+}
+
+enum MembershipType {
+  mem1
+  mem2
+  mem3
+}
+
+enum PositionType {
+  influencer
+  model
+  pressOffice
+  pressOfficeDirector
+  stylist
+  stylistAssistant
+}
+
+enum ProjectStatus {
+  Open
+  Close
+}
+
+enum collectionList {
+  Womenswear
+  Menswear
+  Unisex
+}
+
+enum typeList {
+  Accessories
+  Bags
+  Clothing
+  Footwear
+}
+
+enum availabilityList {
+  Available
+  Loaned
+  Maintenance
+  Gifted
+  Lost
+}
