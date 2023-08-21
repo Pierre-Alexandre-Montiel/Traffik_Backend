@@ -31,7 +31,12 @@ export class UserController {
     })
     @ApiResponse({
         status:200,
-        description:'User created'
+        description:'User created', schema: {
+            type: 'object',
+            properties: {
+                
+            }
+        }
     })
     async createUser(@Body() body) {
         try {

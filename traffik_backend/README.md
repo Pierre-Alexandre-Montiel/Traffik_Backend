@@ -85,7 +85,6 @@ $ npx prisma db pull
 ```bash
 # API Doc
 $ http:://localhost:8080/api
-Capture d’écran 2023-08-21 à 16.41.08
 ```
 
 ## Support
