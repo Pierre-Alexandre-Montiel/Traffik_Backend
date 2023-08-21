@@ -80,6 +80,14 @@ $ npx prisma studio
 $ npx prisma db pull
 ```
 
+## Swagger
+
+```bash
+# API Doc
+$ http:://localhost:8080/api
+Capture d’écran 2023-08-21 à 16.41.08
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
