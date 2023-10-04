@@ -58,7 +58,7 @@ model Company {
   itemShowroom Item[]       @relation("ItemShowroom")
   membership   Membership[]
   team         Position[]
-  project      Project[]
+  //project      Project[]
 }
 
 model Membership {
@@ -98,7 +98,7 @@ model Client {
   createdAt  DateTime? @default(now())
   talent     User?     @relation(fields: [talentId], references: [id])
   provider   Company?  @relation("provider", fields: [providerId], references: [id], map: "provider_providerId_fkey")
-  project    Project[]
+  //project    Project[]
 }
 
 model Address {
@@ -119,22 +119,22 @@ model Address {
 
 model Project {
   id            Int           @id @default(autoincrement())
-  projectStatus ProjectStatus
+  //projectStatus ProjectStatus
   event         String
   stylistId     Int?
-  talentId      Int?
-  loanDate      DateTime
-  fittingDate   DateTime?
-  eventDate     DateTime?
-  returnDate    DateTime
-  pullId        Int?          @unique
-  rating        Int?
-  companyId     Int?
-  createdAt     DateTime?     @default(now())
-  Company       Company?      @relation(fields: [companyId], references: [id])
-  pull          Pull?         @relation(fields: [pullId], references: [id])
+  //talentId      Int?
+  //loanDate      DateTime
+  //fittingDate   DateTime?
+  //eventDate     DateTime?
+  //returnDate    DateTime
+  //pullId        Int?          @unique
+  //rating        Int?
+  //companyId     Int?
+  //createdAt     DateTime?     @default(now())
+  //Company       Company?      @relation(fields: [companyId], references: [id])
+  //pull          Pull?         @relation(fields: [pullId], references: [id])
   stylist       User?         @relation(fields: [stylistId], references: [id])
-  talent        Client?       @relation(fields: [talentId], references: [id])
+  //talent        Client?       @relation(fields: [talentId], references: [id])
 }
 
 model Item {
@@ -186,7 +186,7 @@ model Pull {
   id         Int          @id @default(autoincrement())
   barcodeId  Int?
   createdAt  DateTime?    @default(now())
-  Project    Project?
+  //Project    Project?
   idItem     Item?        @relation(fields: [barcodeId], references: [id])
   PullUpdate PullUpdate[]
 }

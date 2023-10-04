@@ -5,9 +5,11 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './users/user.module'
 import { OauthModule } from './auth/auth.module'
+import { CollectionsModule } from './collections/collections.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
-  imports: [OauthModule, UserModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true}),],
+  imports: [OauthModule, UserModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true}), CollectionsModule, ProjectsModule,],
   controllers: [AppController],
   providers: [AppService],
 })

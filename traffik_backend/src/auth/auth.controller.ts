@@ -2,8 +2,6 @@ import { Body, Controller, Delete, Get, Header, Headers, Param, Post, Request, R
 import { OauthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from './local_strategy/local-auth.guard';
-import { AuthGuard } from '@nestjs/passport';
-import { validate } from 'class-validator';
 import { JwtAuthGuard } from './jwt_strategy/jwt-auth.guard';
 
 
@@ -36,9 +34,26 @@ export class OauthController {
         description:'User created', schema: {
             type: 'object',
             properties: {
-                
+                code: {
+                    type: 'int',
+                    example: '200',
+                    description: 'user created',
+                }, 
             }
-        }
+        } 
+    })
+    @ApiResponse({
+        status:500,
+        description:'User not created', schema: {
+            type: 'object',
+            properties: {
+                code: {
+                    type: 'int',
+                    example: '500',
+                    description: 'user not created',
+                }, 
+            }
+        } 
     })
     async createUser(@Body() body) {
         try {
@@ -47,7 +62,7 @@ export class OauthController {
                 console.log("password", body.password);
                 const user = await this.authservice.createUser(body)
                 return {
-                    code: 200
+                    code: 200, user:user
                 };
         }
         catch(error)
@@ -58,7 +73,6 @@ export class OauthController {
     }
 
     @UseGuards(LocalAuthGuard)
-    //@UseGuards(AuthGuard('local'))
     @Post('/login')
     @ApiOperation({summary:'login a user'})
     @ApiBody({
@@ -80,22 +94,102 @@ export class OauthController {
     })
     @ApiResponse({
         status:200,
-        description:'User login', schema: {
+        description:'User Login', schema: {
             type: 'object',
             properties: {
-                
+                code: {
+                    type: 'int',
+                    example: '200',
+                    description: 'Login sucess',
+                },
+                accesstoken:{
+                    type: 'string',
+                }
+            }
+        } 
+    })
+    @ApiResponse({
+        status:500,
+        description:'User not Login', schema: {
+            type: 'object',
+            properties: {
+                code: {
+                    type: 'int',
+                    example: '500',
+                    description: 'Login unsucess',
+                },
+            }
+        } 
+    })
+    async login(@Request() req) 
+    {
+        try {
+            if (req)
+            {
+                const token = await this.authservice.login(req.user);
+                return {code:200,token}
             }
         }
-    })
-    async login(@Request() req) {
-        return this.authservice.login(req.user);
+        catch(error)
+        {
+            return {code:500}
+        }
     }
 
 
     @UseGuards(JwtAuthGuard)
     @Get('profile')
-    getProfile(@Request() req) 
+    @ApiOperation({summary:'get user'})
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                bearertoken: {
+                    type: 'string',
+                },
+            }
+        }
+    })
+    @ApiResponse({
+        status:200,
+        description:'User Login', schema: {
+            type: 'object',
+            properties: {
+                code: {
+                    type: 'int',
+                    example: '200',
+                    description: 'Login sucess',
+                },
+                accesstoken:{
+                    type: 'string',
+                }
+            }
+        } 
+    })
+    @ApiResponse({
+        status:500,
+        description:'User not Login', schema: {
+            type: 'object',
+            properties: {
+                code: {
+                    type: 'int',
+                    example: '500',
+                    description: 'Login unsucess',
+                },
+            }
+        } 
+    })
+    async getProfile(@Request() req) 
     {
-      return req.user;
+        try {
+            if (req)
+            {
+                return {code:200, user:req.user};
+            }
+        }
+        catch(error)
+        {
+            return {code:500}
+        } 
     }
 }

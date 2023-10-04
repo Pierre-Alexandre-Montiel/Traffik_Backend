@@ -129,18 +129,8 @@ CREATE TABLE "Address" (
 -- CreateTable
 CREATE TABLE "Project" (
     "id" SERIAL NOT NULL,
-    "projectStatus" "ProjectStatus" NOT NULL,
     "event" TEXT NOT NULL,
     "stylistId" INTEGER,
-    "talentId" INTEGER,
-    "loanDate" TIMESTAMP(3) NOT NULL,
-    "fittingDate" TIMESTAMP(3),
-    "eventDate" TIMESTAMP(3),
-    "returnDate" TIMESTAMP(3) NOT NULL,
-    "pullId" INTEGER,
-    "rating" INTEGER,
-    "companyId" INTEGER,
-    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
@@ -256,9 +246,6 @@ CREATE UNIQUE INDEX "Contract_memberId_key" ON "Contract"("memberId");
 CREATE UNIQUE INDEX "Contract_addressId_key" ON "Contract"("addressId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Project_pullId_key" ON "Project"("pullId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Item_collectionId_key" ON "Item"("collectionId");
 
 -- CreateIndex
@@ -310,16 +297,7 @@ ALTER TABLE "Address" ADD CONSTRAINT "Address_companyId_fkey" FOREIGN KEY ("comp
 ALTER TABLE "Address" ADD CONSTRAINT "Address_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Project" ADD CONSTRAINT "Project_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Project" ADD CONSTRAINT "Project_pullId_fkey" FOREIGN KEY ("pullId") REFERENCES "Pull"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Project" ADD CONSTRAINT "Project_stylistId_fkey" FOREIGN KEY ("stylistId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Project" ADD CONSTRAINT "Project_talentId_fkey" FOREIGN KEY ("talentId") REFERENCES "Client"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Item" ADD CONSTRAINT "Item_availabilityId_fkey" FOREIGN KEY ("availabilityId") REFERENCES "Availability"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -11,42 +11,15 @@ export class UserController {
     constructor(private userservice:UserService) {}
 
     @Post('/create')
-    @ApiOperation({summary:'create a user in the DB'})
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                email: {
-                    type: 'sting',
-                    example: 'Wanis@gmail.com',
-                    description: 'user account email',
-                },
-                password: {
-                    type: 'string',
-                    example: '0000',
-                    description: 'user account password',
-                }
-            }
-        }
-    })
-    @ApiResponse({
-        status:200,
-        description:'User created', schema: {
-            type: 'object',
-            properties: {
-                
-            }
-        }
-    })
-    async createUser(@Body() body) {
+    async createProjects(@Body() body) {
         try {
             if (body)
-                console.log("email", body.email);
-                console.log("password", body.password);
-                const user = await this.userservice.createUser(body)
+            {
+                const projects = await this.userservice.createProject(body)
                 return {
-                    code: 200
+                    code: 200, projects : projects
                 };
+            }
         }
         catch(error)
         {
@@ -55,7 +28,25 @@ export class UserController {
         }
     }
 
-    @Post('/login')
+    @Get('/get')
+    async getProjects(@Body() body) {
+        try {
+            if (body)
+            {
+                const projects = await this.userservice.allProjectsById(body.id)
+                return {
+                    code: 200, projects : projects
+                };
+            }
+        }
+        catch(error)
+        {
+            console.log(error);
+            return{code:500}
+        }
+    }
+
+    /*@Post('/login')
     @ApiOperation({summary:'login a user'})
     @ApiBody({
         schema: {
@@ -97,5 +88,5 @@ export class UserController {
             console.log(error);
             return{code:500}
         }
-    }
+    }*/
 }

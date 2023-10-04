@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserLog } from './models/Login';
 import { LoginDto } from './dto/login'
 import * as bcrypt from 'bcrypt';
+import { ProjectDto } from './dto/projects';
 
 
 @Injectable()
@@ -20,10 +21,17 @@ export class UserService {
       return await this.prisma.user.create({data:response});
     }
 
-    async logUser(body: any): Promise<UserLog> 
+
+    async createItems(body: any)
     {
-      const response = await body as UserLog;
-      return await this.prisma.user.create({data:response});
+      const response = await body as ProjectDto;
+      //return await this.prisma.item.create({data:response});
+    }
+
+    async createProject(body: any): Promise<ProjectDto>
+    {
+      const response = await body as ProjectDto;
+      return await this.prisma.project.create({data:response});
     }
 
     async findUser(body:any) 
@@ -40,5 +48,19 @@ export class UserService {
             id
           }
       });
+    }
+
+    async allProjectsById(id: number)
+    {
+      const user = await this.prisma.user.findUnique({
+        where: {
+            id : id
+        },
+        include: {Project:true},
+        })
+        console.log("PROJECT = ", user);
+        if (user != undefined)
+          return (user.Project)
+      return null
     }
 }
