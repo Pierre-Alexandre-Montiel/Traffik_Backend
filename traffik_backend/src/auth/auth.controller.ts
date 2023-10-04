@@ -1,14 +1,16 @@
-import { Body, Controller, Delete, Get, Header, Headers, Param, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors, StreamableFile, UsePipes, ValidationPipe} from '@nestjs/common';
-import { UserService } from './user.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { crossOriginEmbedderPolicy } from 'helmet';
+import { Body, Controller, Delete, Get, Header, Headers, Param, Post, Request, Res, UploadedFile, UseGuards} from '@nestjs/common';
+import { OauthService } from './auth.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LocalAuthGuard } from './local_strategy/local-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { validate } from 'class-validator';
+import { JwtAuthGuard } from './jwt_strategy/jwt-auth.guard';
 
-@ApiTags('Users Routes')
-@Controller('users')
-export class UserController {
-    constructor(private userservice:UserService) {}
+
+@ApiTags('Auth Routes')
+@Controller('auth')
+export class OauthController {
+    constructor(private authservice:OauthService) {}
 
     @Post('/create')
     @ApiOperation({summary:'create a user in the DB'})
@@ -43,7 +45,7 @@ export class UserController {
             if (body)
                 console.log("email", body.email);
                 console.log("password", body.password);
-                const user = await this.userservice.createUser(body)
+                const user = await this.authservice.createUser(body)
                 return {
                     code: 200
                 };
@@ -55,6 +57,8 @@ export class UserController {
         }
     }
 
+    @UseGuards(LocalAuthGuard)
+    //@UseGuards(AuthGuard('local'))
     @Post('/login')
     @ApiOperation({summary:'login a user'})
     @ApiBody({
@@ -83,19 +87,15 @@ export class UserController {
             }
         }
     })
-    async logUser(@Body() body) {
-        try {
-            if (body)
-                console.log("Body", body.firstName);
-                const user = await this.userservice.logUser(body)
-                return {
-                    code: 200
-                };
-        }
-        catch(error)
-        {
-            console.log(error);
-            return{code:500}
-        }
+    async login(@Request() req) {
+        return this.authservice.login(req.user);
+    }
+
+
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    getProfile(@Request() req) 
+    {
+      return req.user;
     }
 }

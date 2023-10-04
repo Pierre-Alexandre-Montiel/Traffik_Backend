@@ -1,4 +1,4 @@
 export type UserLog =  {
-    firstName: string,
-    lastName: string,
+    email: string,
+    password: string,
 }
