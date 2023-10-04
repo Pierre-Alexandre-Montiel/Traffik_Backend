@@ -80,6 +80,15 @@ $ npx prisma studio
 $ npx prisma db pull
 ```
 
+## .Env File
+
+```bash
+# Create a .env a the root & and thoses variables
+$ DATABASE_URL="postgresql://postgres:pablo@localhost:5432/traffik?schema=public"
+# You can choose what ever secret you want, need to be a string
+$ SECRET_JWT=""
+```
+
 ## Swagger
 
 ```bash
