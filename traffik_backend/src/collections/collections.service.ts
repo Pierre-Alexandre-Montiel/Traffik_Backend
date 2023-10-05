@@ -4,18 +4,14 @@ import { ItemsDto } from 'src/collections/dto/items';
 
 @Injectable()
 export class CollectionsService {
-    constructor(
-		private prisma: PrismaService,
-    ){}
+  constructor(private prisma: PrismaService) {}
 
-    async allItems(){
-        return await this.prisma.item.findMany();
-    }
+  async allItems() {
+    return await this.prisma.item.findMany();
+  }
 
-    async createItems(body): Promise<ItemsDto> 
-    {
-        const response = await body as ItemsDto;
-        return await this.prisma.item.create({data:response});
-    }
+  async createItems(body): Promise<ItemsDto> {
+    const response = (await body) as ItemsDto;
+    return await this.prisma.item.create({ data: response });
+  }
 }
-

@@ -1,4 +1,4 @@
-export type UserLog =  {
-    email: string,
-    password: string,
-}
+export type UserLog = {
+  email: string;
+  password: string;
+};

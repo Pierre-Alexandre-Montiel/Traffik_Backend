@@ -11,11 +11,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   //const configService = app.get(ConfigService);
   app.use(cookieParser());
-  app.enableCors(
-  {
-      origin: ['http://localhost:8080'],
-      methods: ['POST', 'PUT', 'DELETE', 'GET']
-  })
+  app.enableCors({
+    origin: ['http://localhost:8080'],
+    methods: ['POST', 'PUT', 'DELETE', 'GET'],
+  });
   app.use(helmet.noSniff());
   app.use(helmet.contentSecurityPolicy());
   app.use(helmet.xssFilter());
@@ -29,6 +28,4 @@ async function bootstrap() {
   //await app.listen(configService.get('APP_PORT'));
   await app.listen(8080);
 }
-bootstrap(
-  
-);
+bootstrap();
