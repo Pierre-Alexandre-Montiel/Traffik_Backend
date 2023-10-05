@@ -8,20 +8,20 @@ datasource db {
 }
 
 model User {
-  id           Int         @id @default(autoincrement())
+  id           String      @id @default(uuid())
   email        String?     @unique
   firstName    String?
   lastName     String?
-  userStatusId Int?        @unique
-  userTypeId   Int?        @unique
+  userStatusId String?        @unique
+  userTypeId   String?        @unique
   phone        String?
   instagram    String?
   tiktok       String?
-  positionId   Int?        @unique
+  positionId   String?        @unique
   password     String?
   updatedAt    DateTime?   @updatedAt
   createdAt    DateTime?   @default(now())
-  membershipId Int?        @unique
+  membershipId String?       @unique
   address      Address[]
   client       Client[]
   company      Company?
@@ -34,21 +34,21 @@ model User {
 }
 
 model UserStatus {
-  id         Int             @id @default(autoincrement())
+  id        String      @id @default(uuid())
   userStatus userStatusList?
   User       User?
 }
 
 model UserType {
-  id       Int           @id @default(autoincrement())
+  id        String      @id @default(uuid())
   userType userTypeList?
   user     User?
 }
 
 model Company {
-  id           Int          @id @default(autoincrement())
+  id           String      @id @default(uuid())
   company      String?      @unique
-  employeeId   Int?         @unique
+  employeeId   String?         @unique
   createdAt    DateTime?    @default(now())
   addresses    Address[]
   client       Client[]     @relation("provider")
@@ -62,21 +62,21 @@ model Company {
 }
 
 model Membership {
-  id             Int            @id @default(autoincrement())
+  id        String      @id @default(uuid())
   membershipType MembershipType
-  companyId      Int?
+  companyId     String?
   company        Company?       @relation(fields: [companyId], references: [id])
   member         User?
 }
 
 model Contract {
-  id        Int       @id @default(autoincrement())
+  id        String      @id @default(uuid())
   legalName String?   @unique
   startDate DateTime
   endDate   DateTime
-  companyId Int?
-  memberId  Int?      @unique
-  addressId Int?      @unique
+  companyId String?
+  memberId  String?      @unique
+  addressId String?      @unique
   createdAt DateTime? @default(now())
   address   Address?  @relation(fields: [addressId], references: [id])
   company   Company?  @relation(fields: [companyId], references: [id])
@@ -84,17 +84,17 @@ model Contract {
 }
 
 model Position {
-  id        Int           @id @default(autoincrement())
+  id        String      @id @default(uuid())
   position  PositionType?
-  companyId Int?
+  companyId String?
   company   Company?      @relation(fields: [companyId], references: [id])
   User      User?
 }
 
 model Client {
-  id         Int       @id @default(autoincrement())
-  talentId   Int?
-  providerId Int?
+  id        String      @id @default(uuid())
+  talentId   String?
+  providerId String?
   createdAt  DateTime? @default(now())
   talent     User?     @relation(fields: [talentId], references: [id])
   provider   Company?  @relation("provider", fields: [providerId], references: [id], map: "provider_providerId_fkey")
@@ -102,15 +102,15 @@ model Client {
 }
 
 model Address {
-  id        Int       @id @default(autoincrement())
+  id        String      @id @default(uuid())
   address1  String?
   address2  String?
   city      String?
   state     String?
   zip       String?
   country   String?
-  userId    Int?
-  companyId Int?
+  userId    String?
+  companyId String?
   createdAt DateTime? @default(now())
   company   Company?  @relation(fields: [companyId], references: [id])
   user      User?     @relation(fields: [userId], references: [id])
@@ -118,10 +118,10 @@ model Address {
 }
 
 model Project {
-  id            Int           @id @default(autoincrement())
+  id        String      @id @default(uuid())
   //projectStatus ProjectStatus
   event         String
-  stylistId     Int?
+  stylistId     String?
   //talentId      Int?
   //loanDate      DateTime
   //fittingDate   DateTime?
@@ -138,15 +138,15 @@ model Project {
 }
 
 model Item {
-  id               Int           @id @default(autoincrement())
+  id        String      @id @default(uuid())
   barcode          String?
   createdAt        DateTime      @default(now())
-  brandId          Int?
-  showroomId       Int?
-  collectionId     Int?          @unique
+  brandId          String?
+  showroomId       String?
+  collectionId     String?         @unique
   season           String?
   style            String?
-  typeId           Int?          @unique
+  typeId           String?          @unique
   size             String?
   color            String?
   location         String?
@@ -165,13 +165,13 @@ model Item {
 }
 
 model Collection {
-  id         Int             @id @default(autoincrement())
+  id        String      @id @default(uuid())
   collection collectionList?
   Item       Item?
 }
 
 model Type {
-  id   Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   type typeList
   Item Item?
 }
@@ -184,7 +184,7 @@ model Availability {
 
 model Pull {
   id         Int          @id @default(autoincrement())
-  barcodeId  Int?
+  barcodeId  String?
   createdAt  DateTime?    @default(now())
   //Project    Project?
   idItem     Item?        @relation(fields: [barcodeId], references: [id])
@@ -192,7 +192,7 @@ model Pull {
 }
 
 model PullUpdate {
-  id        Int       @id @default(autoincrement())
+  id        String      @id @default(uuid())
   pullId    Int?
   ready     Int?
   out       Int?
@@ -204,7 +204,7 @@ model PullUpdate {
 }
 
 model Lambda {
-  id        Int       @id @default(autoincrement())
+  id        String      @id @default(uuid())
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 }

@@ -47,7 +47,7 @@ export class OauthService {
     });
   }
 
-  async findUserByIdDb(id: number) {
+  async findUserByIdDb(id: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id,

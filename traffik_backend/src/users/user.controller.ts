@@ -31,7 +31,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get('/profile/:id')
   async getProfile(@Param() id) {
-    const user = await this.userservice.findOne(+id.id);
+    const user = await this.userservice.findOne(id.id);
     if (user) return { code: 200, user: user };
     else return { code: 500 };
   }

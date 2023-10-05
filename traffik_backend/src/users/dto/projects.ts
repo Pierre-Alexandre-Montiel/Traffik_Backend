@@ -4,5 +4,5 @@ import internal from 'stream';
 export class ProjectDto {
   @IsNotEmpty()
   event: string;
-  stylistId: number;
+  stylistId: string;
 }

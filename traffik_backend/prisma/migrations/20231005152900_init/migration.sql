@@ -24,27 +24,27 @@ CREATE TYPE "availabilityList" AS ENUM ('Available', 'Loaned', 'Maintenance', 'G
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "email" TEXT,
     "firstName" TEXT,
     "lastName" TEXT,
-    "userStatusId" INTEGER,
-    "userTypeId" INTEGER,
+    "userStatusId" TEXT,
+    "userTypeId" TEXT,
     "phone" TEXT,
     "instagram" TEXT,
     "tiktok" TEXT,
-    "positionId" INTEGER,
+    "positionId" TEXT,
     "password" TEXT,
     "updatedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "membershipId" INTEGER,
+    "membershipId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "UserStatus" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "userStatus" "userStatusList",
 
     CONSTRAINT "UserStatus_pkey" PRIMARY KEY ("id")
@@ -52,7 +52,7 @@ CREATE TABLE "UserStatus" (
 
 -- CreateTable
 CREATE TABLE "UserType" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "userType" "userTypeList",
 
     CONSTRAINT "UserType_pkey" PRIMARY KEY ("id")
@@ -60,9 +60,9 @@ CREATE TABLE "UserType" (
 
 -- CreateTable
 CREATE TABLE "Company" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "company" TEXT,
-    "employeeId" INTEGER,
+    "employeeId" TEXT,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Company_pkey" PRIMARY KEY ("id")
@@ -70,22 +70,22 @@ CREATE TABLE "Company" (
 
 -- CreateTable
 CREATE TABLE "Membership" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "membershipType" "MembershipType" NOT NULL,
-    "companyId" INTEGER,
+    "companyId" TEXT,
 
     CONSTRAINT "Membership_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Contract" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "legalName" TEXT,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
-    "companyId" INTEGER,
-    "memberId" INTEGER,
-    "addressId" INTEGER,
+    "companyId" TEXT,
+    "memberId" TEXT,
+    "addressId" TEXT,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Contract_pkey" PRIMARY KEY ("id")
@@ -93,18 +93,18 @@ CREATE TABLE "Contract" (
 
 -- CreateTable
 CREATE TABLE "Position" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "position" "PositionType",
-    "companyId" INTEGER,
+    "companyId" TEXT,
 
     CONSTRAINT "Position_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Client" (
-    "id" SERIAL NOT NULL,
-    "talentId" INTEGER,
-    "providerId" INTEGER,
+    "id" TEXT NOT NULL,
+    "talentId" TEXT,
+    "providerId" TEXT,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Client_pkey" PRIMARY KEY ("id")
@@ -112,15 +112,15 @@ CREATE TABLE "Client" (
 
 -- CreateTable
 CREATE TABLE "Address" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "address1" TEXT,
     "address2" TEXT,
     "city" TEXT,
     "state" TEXT,
     "zip" TEXT,
     "country" TEXT,
-    "userId" INTEGER,
-    "companyId" INTEGER,
+    "userId" TEXT,
+    "companyId" TEXT,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Address_pkey" PRIMARY KEY ("id")
@@ -128,24 +128,24 @@ CREATE TABLE "Address" (
 
 -- CreateTable
 CREATE TABLE "Project" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "event" TEXT NOT NULL,
-    "stylistId" INTEGER,
+    "stylistId" TEXT,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Item" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "barcode" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "brandId" INTEGER,
-    "showroomId" INTEGER,
-    "collectionId" INTEGER,
+    "brandId" TEXT,
+    "showroomId" TEXT,
+    "collectionId" TEXT,
     "season" TEXT,
     "style" TEXT,
-    "typeId" INTEGER,
+    "typeId" TEXT,
     "size" TEXT,
     "color" TEXT,
     "location" TEXT,
@@ -161,7 +161,7 @@ CREATE TABLE "Item" (
 
 -- CreateTable
 CREATE TABLE "Collection" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "collection" "collectionList",
 
     CONSTRAINT "Collection_pkey" PRIMARY KEY ("id")
@@ -169,7 +169,7 @@ CREATE TABLE "Collection" (
 
 -- CreateTable
 CREATE TABLE "Type" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "type" "typeList" NOT NULL,
 
     CONSTRAINT "Type_pkey" PRIMARY KEY ("id")
@@ -186,7 +186,7 @@ CREATE TABLE "Availability" (
 -- CreateTable
 CREATE TABLE "Pull" (
     "id" SERIAL NOT NULL,
-    "barcodeId" INTEGER,
+    "barcodeId" TEXT,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Pull_pkey" PRIMARY KEY ("id")
@@ -194,7 +194,7 @@ CREATE TABLE "Pull" (
 
 -- CreateTable
 CREATE TABLE "PullUpdate" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "pullId" INTEGER,
     "ready" INTEGER,
     "out" INTEGER,
@@ -208,7 +208,7 @@ CREATE TABLE "PullUpdate" (
 
 -- CreateTable
 CREATE TABLE "Lambda" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
