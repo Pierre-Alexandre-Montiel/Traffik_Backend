@@ -1,7 +1,7 @@
 import { Body, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserLog } from './models/Login';
-import { LoginDto } from './dto/login'
+import { LoginDto } from '../auth/dto/login'
 import * as bcrypt from 'bcrypt';
 import { ProjectDto } from './dto/projects';
 
@@ -19,13 +19,6 @@ export class UserService {
       const pwd = response.password;
       response.password = await bcrypt.hash(pwd, salt);
       return await this.prisma.user.create({data:response});
-    }
-
-
-    async createItems(body: any)
-    {
-      const response = await body as ProjectDto;
-      //return await this.prisma.item.create({data:response});
     }
 
     async createProject(body: any): Promise<ProjectDto>

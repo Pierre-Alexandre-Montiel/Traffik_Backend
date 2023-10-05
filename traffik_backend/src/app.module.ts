@@ -7,9 +7,10 @@ import { UserModule } from './users/user.module'
 import { OauthModule } from './auth/auth.module'
 import { CollectionsModule } from './collections/collections.module';
 import { ProjectsModule } from './projects/projects.module';
+import { HomeModule } from './home/home.module';
 
 @Module({
-  imports: [OauthModule, UserModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true}), CollectionsModule, ProjectsModule,],
+  imports: [OauthModule, UserModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true}), CollectionsModule, ProjectsModule, HomeModule,],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -153,7 +153,7 @@ CREATE TABLE "Item" (
     "condition" INTEGER,
     "comment" TEXT,
     "replacementValue" INTEGER,
-    "picture" BYTEA,
+    "picture" TEXT,
     "retailValue" INTEGER,
 
     CONSTRAINT "Item_pkey" PRIMARY KEY ("id")

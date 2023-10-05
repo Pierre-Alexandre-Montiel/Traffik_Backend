@@ -4,11 +4,23 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { crossOriginEmbedderPolicy } from 'helmet';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt_strategy/jwt-auth.guard';
 
 @ApiTags('Users Routes')
 @Controller('users')
 export class UserController {
     constructor(private userservice:UserService) {}
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/profile/:id')
+    async getProfile(@Param() id) {
+        const user = await this.userservice.findOne(+id.id);
+        if (user)
+            return {code:200, user:user};
+        else
+            return {code:500};
+    }
+
 
     @Post('/create')
     async createProjects(@Body() body) {

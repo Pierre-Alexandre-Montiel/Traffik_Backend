@@ -154,7 +154,7 @@ model Item {
   condition        Int?
   comment          String?
   replacementValue Int?
-  picture          Bytes?
+  picture          String?
   retailValue      Int?
   availability     Availability? @relation(fields: [availabilityId], references: [id])
   brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])

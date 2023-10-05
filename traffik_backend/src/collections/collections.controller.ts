@@ -3,27 +3,17 @@ import { Body, Controller, Delete, Get, Header, Headers, Param, Post, Request, R
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt_strategy/jwt-auth.guard';
 
+@ApiTags('Collections Routes')
 @Controller('collections')
 export class CollectionsController {
 
     constructor(private collecservice:CollectionsService) {}
 
-    @UseGuards(JwtAuthGuard)
     @Get('items')
     @ApiOperation({summary:'get all items'})
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                bearertoken: {
-                    type: 'string',
-                },
-            }
-        }
-    })
     @ApiResponse({
         status:200,
-        description:'User Login', schema: {
+        description:'all items', schema: {
             type: 'object',
             properties: {
                 code: {
@@ -31,8 +21,8 @@ export class CollectionsController {
                     example: '200',
                     description: 'Login sucess',
                 },
-                accesstoken:{
-                    type: 'string',
+                items:{
+                    type: 'object',
                 }
             }
         } 
@@ -57,6 +47,22 @@ export class CollectionsController {
             {
                 const items = await this.collecservice.allItems();
                 return {code:200, items:items};
+            }
+        }
+        catch(error)
+        {
+            return {code:500}
+        } 
+    }
+
+    @Post('create')
+    async createItems(@Body() body) 
+    {
+        try {
+            if (body)
+            {
+                const items = await this.collecservice.createItems(body);
+                return {code:200};
             }
         }
         catch(error)
