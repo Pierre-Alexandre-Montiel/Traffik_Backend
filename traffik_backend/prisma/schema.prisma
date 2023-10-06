@@ -146,21 +146,21 @@ model Item {
   collectionId     String?         @unique
   season           String?
   style            String?
-  typeId           String?          @unique
+  typeId           String?          
   size             String?
   color            String?
   location         String?
   availabilityId   Int?          @unique
   condition        Int?
   comment          String?
-  replacementValue Int?
+  replacementValue String?
   picture          String?
   retailValue      Int?
   availability     Availability? @relation(fields: [availabilityId], references: [id])
   brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])
   collection       Collection?   @relation(fields: [collectionId], references: [id])
   showroom         Company?      @relation("ItemShowroom", fields: [showroomId], references: [id])
-  type             Type?         @relation(fields: [typeId], references: [id])
+//  type             Type?         @relation(fields: [typeId], references: [id])
   pull             Pull[]
 }
 
@@ -170,11 +170,11 @@ model Collection {
   Item       Item?
 }
 
-model Type {
-  id        String      @id @default(uuid())
-  type typeList
-  Item Item?
-}
+//model Type {
+//  id        String      @id @default(uuid())
+//  type typeList
+//  Item Item?
+//}
 
 model Availability {
   id           Int              @id @default(autoincrement())

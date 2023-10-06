@@ -21,7 +21,7 @@ import { JwtAuthGuard } from '../auth/jwt_strategy/jwt-auth.guard';
 export class CollectionsController {
   constructor(private collecservice: CollectionsService) {}
 
-  @Get('items')
+  @Get('/items')
   @ApiOperation({ summary: 'get all items' })
   @ApiResponse({
     status: 200,
@@ -101,21 +101,32 @@ export class CollectionsController {
   async getOneItem(@Param() id) {
     try {
       if (id) {
-        const items = await this.collecservice.allItems();
-        return { code: 200, items: items };
+        const item = await this.collecservice.oneItem(id);
+        return { code: 200, item: item };
       }
     } catch (error) {
       return { code: 500 };
     }
   }
 
-  @Post('create')
+  @Post('/create')
   async createItems(@Body() body) {
     try {
       if (body) {
         const items = await this.collecservice.createItems(body);
         return { code: 200 };
       }
+    } catch (error) {
+      return { code: 500 };
+    }
+  }
+
+  @Post('/upload')
+  async uploadInventory() {
+    try {
+        //await this.collecservice.downloadFileFromGoogleDrive(process.env.DEST);
+        const items = await this.collecservice.importProductsFromCsv("/Users/pierre-alexandremontiel/Desktop/TRAFFIK/traffik-os/traffik_backend/src/assets/inventory.csv");
+        return { code: 200 };
     } catch (error) {
       return { code: 500 };
     }

@@ -152,7 +152,7 @@ CREATE TABLE "Item" (
     "availabilityId" INTEGER,
     "condition" INTEGER,
     "comment" TEXT,
-    "replacementValue" INTEGER,
+    "replacementValue" TEXT,
     "picture" TEXT,
     "retailValue" INTEGER,
 
@@ -165,14 +165,6 @@ CREATE TABLE "Collection" (
     "collection" "collectionList",
 
     CONSTRAINT "Collection_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Type" (
-    "id" TEXT NOT NULL,
-    "type" "typeList" NOT NULL,
-
-    CONSTRAINT "Type_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -249,9 +241,6 @@ CREATE UNIQUE INDEX "Contract_addressId_key" ON "Contract"("addressId");
 CREATE UNIQUE INDEX "Item_collectionId_key" ON "Item"("collectionId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Item_typeId_key" ON "Item"("typeId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Item_availabilityId_key" ON "Item"("availabilityId");
 
 -- AddForeignKey
@@ -310,9 +299,6 @@ ALTER TABLE "Item" ADD CONSTRAINT "Item_collectionId_fkey" FOREIGN KEY ("collect
 
 -- AddForeignKey
 ALTER TABLE "Item" ADD CONSTRAINT "Item_showroomId_fkey" FOREIGN KEY ("showroomId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Item" ADD CONSTRAINT "Item_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "Type"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pull" ADD CONSTRAINT "Pull_barcodeId_fkey" FOREIGN KEY ("barcodeId") REFERENCES "Item"("id") ON DELETE SET NULL ON UPDATE CASCADE;
