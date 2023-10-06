@@ -24,7 +24,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt_strategy/jwt-auth.guard';
 
 @ApiTags('Users Routes')
-@Controller('users')
+@Controller('api/users')
 export class UserController {
   constructor(private userservice: UserService) {}
 

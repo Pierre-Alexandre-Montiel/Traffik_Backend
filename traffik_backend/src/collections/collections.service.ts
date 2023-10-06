@@ -52,4 +52,15 @@ export class CollectionsService {
 
     fs.writeFileSync(destination, Buffer.from(response.data));
   }
+
+  async searchRequest(body) {
+    return await this.prisma.item.findMany({
+        where: {
+          OR: [
+            { style: { contains: body.query, mode: 'insensitive' } },
+           // { description: { contains: body.query, mode: 'insensitive' } },
+          ],
+        },
+      });
+  }
 }

@@ -17,7 +17,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt_strategy/jwt-auth.guard';
 
 @ApiTags('Collections Routes')
-@Controller('collections')
+@Controller('api/collections')
 export class CollectionsController {
   constructor(private collecservice: CollectionsService) {}
 
@@ -127,6 +127,17 @@ export class CollectionsController {
         //await this.collecservice.downloadFileFromGoogleDrive(process.env.DEST);
         const items = await this.collecservice.importProductsFromCsv("/Users/pierre-alexandremontiel/Desktop/TRAFFIK/traffik-os/traffik_backend/src/assets/inventory.csv");
         return { code: 200 };
+    } catch (error) {
+      return { code: 500 };
+    }
+  }
+
+  @Post('/search')
+  async searchInventory(@Body() body) {
+    try {
+        //await this.collecservice.downloadFileFromGoogleDrive(process.env.DEST);
+        const search = await this.collecservice.searchRequest(body);
+        return { code: 200, search: search };
     } catch (error) {
       return { code: 500 };
     }

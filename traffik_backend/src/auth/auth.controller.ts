@@ -18,7 +18,7 @@ import { LocalAuthGuard } from './local_strategy/local-auth.guard';
 import { JwtAuthGuard } from './jwt_strategy/jwt-auth.guard';
 
 @ApiTags('Auth Routes')
-@Controller('auth')
+@Controller('api/auth')
 export class OauthController {
   constructor(private authservice: OauthService) {}
 
