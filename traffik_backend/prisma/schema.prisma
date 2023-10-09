@@ -139,7 +139,7 @@ model Project {
 
 model Item {
   id               String        @id @default(uuid())
-  barcode         String?      
+  barcode           String?     @unique 
   createdAt        DateTime      @default(now())
   brandId          String?
   showroomId       String?
@@ -154,7 +154,7 @@ model Item {
   condition        Int?
   comment          String?
   replacementValue String?
-  //picture          Pictures[]
+  picture          Pictures[]
   retailValue      Int?
   availability     Availability? @relation(fields: [availabilityId], references: [id])
   brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])
@@ -172,11 +172,11 @@ model Item {
 //  item  Item    @relation(fields: [itemId], references: [id])
 //}
 
-//model Pictures {
- // id        String      @id @default(uuid())
- // pics      String
- // link      Item?         @relation(fields: [id], references: [id])
-//}
+model Pictures {
+  id        String      @id @default(uuid())
+  pics      String
+  link      Item?         @relation(fields: [id], references: [barcode])
+}
 
 model Collection {
   id        String      @id @default(uuid())

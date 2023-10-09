@@ -109,6 +109,18 @@ export class CollectionsController {
     }
   }
 
+  @Post('/uploadpictures')
+  async uploadPictures() {
+    try{
+      const item = await this.collecservice.uploadItemsImages("/Users/pierre-alexandremontiel/Desktop/TRAFFIK/traffik-os/traffik_backend/src/assets/inventory.csv");
+      return { code: 200};
+    }
+    catch (error)
+    {
+      return {code : 500};
+    } 
+  }
+
   /*@Post('/create')
   async createItems(@Body() body) {
     try {

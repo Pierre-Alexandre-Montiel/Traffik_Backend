@@ -45,6 +45,29 @@ export class CollectionsService {
     return await this.prisma.item.create({ data: response });
   }*/
 
+  async uploadItemsImages(filePath:string){
+    const stream = fs.createReadStream(filePath);
+    let i = 0;
+    const csvStream = csv.parse({ headers: true })
+      .on('data', async (res) => {
+        await this.prisma.pictures.create({
+          data: {
+            pics: process.env.IMG + res.barcode + ".jpg",
+            // Use connect to reference the Item by its barcode
+            link: { connect: { barcode: res.barcode } },
+          },
+        });
+      })
+      .on('end', () => {
+        console.log('CSV file successfully processed');
+      })
+      .on('error', (error) => {
+        console.error('Error processing CSV file:', error);
+        throw error;
+      });
+    stream.pipe(csvStream); 
+  
+  }
 
   async importProductsFromCsv(filePath: string): Promise<void> {
     const stream = fs.createReadStream(filePath);
@@ -54,37 +77,6 @@ export class CollectionsService {
         // Assuming your CSV columns match your Product model fields
         //const infos = await res as ItemsDto;
         await this.prisma.item.create({ data: res });
-        /*const itemData: Prisma.ItemCreateInput = {
-          barecode: infos.barcode,
-          season: infos.season,
-          style: infos.style,
-          typeId: infos.typeId,
-          color: infos.color,
-          location: infos.location,
-          replacementValue: infos.replacementValue,
-        };
-        const sty = await this.findItemByStyle(infos.style);
-        console.log("i = ", i);
-        console.log("style = ", infos.style);
-        console.log("RES = ", sty);
-        try {
-          if (!sty) {
-            console.log("Item doesn't exist, creating...");
-            i += 1;
-            await this.prisma.item.create({ data: itemData });
-          }
-          console.log("Item exists, creating size...");
-          await this.prisma.sizes.create({
-            data: {
-              size: res.size,
-              id : randomUUID(),
-              // Use connect to reference the Item by its barecode
-              item: { connect: { barecode: infos.barcode } },
-            },
-          });
-        } catch (error) {
-          console.error('Error creating item or size:', error);
-        }*/
       })
       .on('end', () => {
         console.log('CSV file successfully processed');

@@ -159,6 +159,14 @@ CREATE TABLE "Item" (
 );
 
 -- CreateTable
+CREATE TABLE "Pictures" (
+    "id" TEXT NOT NULL,
+    "pics" TEXT NOT NULL,
+
+    CONSTRAINT "Pictures_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Collection" (
     "id" TEXT NOT NULL,
     "collection" "collectionList",
@@ -237,6 +245,9 @@ CREATE UNIQUE INDEX "Contract_memberId_key" ON "Contract"("memberId");
 CREATE UNIQUE INDEX "Contract_addressId_key" ON "Contract"("addressId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Item_barcode_key" ON "Item"("barcode");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Item_collectionId_key" ON "Item"("collectionId");
 
 -- CreateIndex
@@ -298,6 +309,9 @@ ALTER TABLE "Item" ADD CONSTRAINT "Item_collectionId_fkey" FOREIGN KEY ("collect
 
 -- AddForeignKey
 ALTER TABLE "Item" ADD CONSTRAINT "Item_showroomId_fkey" FOREIGN KEY ("showroomId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Pictures" ADD CONSTRAINT "Pictures_id_fkey" FOREIGN KEY ("id") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pull" ADD CONSTRAINT "Pull_barcodeId_fkey" FOREIGN KEY ("barcodeId") REFERENCES "Item"("id") ON DELETE SET NULL ON UPDATE CASCADE;
