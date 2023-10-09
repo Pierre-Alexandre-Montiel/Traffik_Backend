@@ -45,4 +45,20 @@ export class UserService {
     if (user != undefined) return user.Project;
     return null;
   }
+
+  async updateProfile(id: string, body) {
+    const user = await this.prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+         email: body.email,
+         firstName: body.firstName,
+         lastName: body.lastName,
+        }
+    });
+    if (user)
+      return user;
+    return null;
+  }
 }

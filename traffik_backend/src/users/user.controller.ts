@@ -36,6 +36,16 @@ export class UserController {
     else return { code: 500 };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('/profile/:id')
+  async profileUpdate(@Param() id, @Body() body) {
+    const user = await this.userservice.updateProfile(id, body);
+    if (user) 
+      return { code: 200, user: user };
+    else 
+      return { code: 500 };
+  }
+
   @Post('/create')
   async createProjects(@Body() body) {
     try {
