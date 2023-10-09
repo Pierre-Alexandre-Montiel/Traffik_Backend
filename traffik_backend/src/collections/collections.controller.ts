@@ -65,7 +65,7 @@ export class CollectionsController {
     }
   }
 
-  @Get('/item/:id')
+  @Get('/item')
   @ApiOperation({ summary: 'get one item' })
   @ApiResponse({
     status: 200,
@@ -98,10 +98,10 @@ export class CollectionsController {
       },
     },
   })
-  async getOneItem(@Param() id) {
+  async getOneItem(@Body() body) {
     try {
-      if (id) {
-        const item = await this.collecservice.oneItem(id);
+      if (body) {
+        const item = await this.collecservice.oneItem(body);
         return { code: 200, item: item };
       }
     } catch (error) {
@@ -109,7 +109,7 @@ export class CollectionsController {
     }
   }
 
-  @Post('/create')
+  /*@Post('/create')
   async createItems(@Body() body) {
     try {
       if (body) {
@@ -119,7 +119,7 @@ export class CollectionsController {
     } catch (error) {
       return { code: 500 };
     }
-  }
+  }*/
 
   @Post('/upload')
   async uploadInventory() {

@@ -138,8 +138,8 @@ model Project {
 }
 
 model Item {
-  id        String      @id @default(uuid())
-  barcode          String?
+  id               String        @id @default(uuid())
+  barcode         String?      
   createdAt        DateTime      @default(now())
   brandId          String?
   showroomId       String?
@@ -154,7 +154,7 @@ model Item {
   condition        Int?
   comment          String?
   replacementValue String?
-  picture          String?
+  //picture          Pictures[]
   retailValue      Int?
   availability     Availability? @relation(fields: [availabilityId], references: [id])
   brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])
@@ -163,6 +163,20 @@ model Item {
 //  type             Type?         @relation(fields: [typeId], references: [id])
   pull             Pull[]
 }
+
+
+//model Sizes {
+//  id    String  @unique
+//  size  String
+//  itemId String  // Foreign key referencing Item
+//  item  Item    @relation(fields: [itemId], references: [id])
+//}
+
+//model Pictures {
+ // id        String      @id @default(uuid())
+ // pics      String
+ // link      Item?         @relation(fields: [id], references: [id])
+//}
 
 model Collection {
   id        String      @id @default(uuid())
