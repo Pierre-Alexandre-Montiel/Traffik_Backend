@@ -142,6 +142,7 @@ CREATE TABLE "Item" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "brandId" TEXT,
     "showroomId" TEXT,
+    "UserId" TEXT,
     "collectionId" TEXT,
     "season" TEXT,
     "style" TEXT,
@@ -156,6 +157,17 @@ CREATE TABLE "Item" (
     "retailValue" INTEGER,
 
     CONSTRAINT "Item_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Wishlist" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Wishlist_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -309,6 +321,15 @@ ALTER TABLE "Item" ADD CONSTRAINT "Item_collectionId_fkey" FOREIGN KEY ("collect
 
 -- AddForeignKey
 ALTER TABLE "Item" ADD CONSTRAINT "Item_showroomId_fkey" FOREIGN KEY ("showroomId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Item" ADD CONSTRAINT "Item_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Wishlist" ADD CONSTRAINT "Wishlist_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Wishlist" ADD CONSTRAINT "Wishlist_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pictures" ADD CONSTRAINT "Pictures_id_fkey" FOREIGN KEY ("id") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;

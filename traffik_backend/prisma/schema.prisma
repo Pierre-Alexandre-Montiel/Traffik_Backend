@@ -22,11 +22,13 @@ model User {
   updatedAt    DateTime?   @updatedAt
   createdAt    DateTime?   @default(now())
   membershipId String?       @unique
+  wishlist      Wishlist[]
   address      Address[]
   client       Client[]
   company      Company?
   Contract     Contract?
   Project      Project[]
+  Whishlist    Item[]
   membership   Membership? @relation(fields: [membershipId], references: [id])
   position     Position?   @relation(fields: [positionId], references: [id])
   userStatus   UserStatus? @relation(fields: [userStatusId], references: [id])
@@ -143,6 +145,7 @@ model Item {
   createdAt        DateTime      @default(now())
   brandId          String?
   showroomId       String?
+  UserId            String?
   collectionId     String?         @unique
   season           String?
   style            String?
@@ -155,15 +158,26 @@ model Item {
   comment          String?
   replacementValue String?
   picture          Pictures[]
+  wishlist         Wishlist[]
   retailValue      Int?
   availability     Availability? @relation(fields: [availabilityId], references: [id])
   brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])
   collection       Collection?   @relation(fields: [collectionId], references: [id])
   showroom         Company?      @relation("ItemShowroom", fields: [showroomId], references: [id])
+  whishlist         User?      @relation(fields: [UserId], references: [id])
 //  type             Type?         @relation(fields: [typeId], references: [id])
   pull             Pull[]
 }
 
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  product   Item     @relation(fields: [productId], references: [id])
+}
 
 //model Sizes {
 //  id    String  @unique

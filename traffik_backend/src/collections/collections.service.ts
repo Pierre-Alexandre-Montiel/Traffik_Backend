@@ -76,6 +76,7 @@ export class CollectionsService {
       .on('data', async (res) => {
         // Assuming your CSV columns match your Product model fields
         //const infos = await res as ItemsDto;
+        console.log("RES = ", res)
         await this.prisma.item.create({ data: res });
       })
       .on('end', () => {

@@ -17,6 +17,22 @@ export class UserService {
     return await this.prisma.user.create({ data: response });
   }
 
+  async updateProfile(id: string, body) {
+    const user = await this.prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+         email: body.email,
+         firstName: body.firstName,
+         lastName: body.lastName,
+        }
+    });
+    if (user)
+      return user;
+    return null;
+  }
+
   async createProject(body: any): Promise<ProjectDto> {
     const response = (await body) as ProjectDto;
     return await this.prisma.project.create({ data: response });
@@ -46,16 +62,24 @@ export class UserService {
     return null;
   }
 
-  async updateProfile(id: string, body) {
-    const user = await this.prisma.user.update({
+  async getUserWhishlist(id: string) {
+    const user = await this.prisma.wishlist.findMany({
       where: {
-        id: id,
+        userId: id,
       },
+      include: { product: true },
+    });
+    if (user != undefined) 
+      return user;
+    return null;
+  }
+
+  async updateWhishlist(id: string, body:any) {
+    const user = await this.prisma.wishlist.create({
       data: {
-         email: body.email,
-         firstName: body.firstName,
-         lastName: body.lastName,
-        }
+        userId: body,
+        productId: id,
+      }
     });
     if (user)
       return user;

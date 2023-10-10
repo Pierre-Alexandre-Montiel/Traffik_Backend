@@ -78,6 +78,24 @@ export class UserController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('/profile/whishlist/:id')
+  async getWhishlist(@Param() id) {
+    const user = await this.userservice.getUserWhishlist(id.id);
+    if (user) return { code: 200, whishlist: user };
+    else return { code: 500 };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/profile/whishlist/:id')
+  async addWhishlist(@Param() id, @Body() body) {
+    const user = await this.userservice.updateWhishlist(id.id, body.UserId);
+    if (user) 
+      return { code: 200, whishlist: user };
+    else 
+      return { code: 500 };
+  }
+
   /*@Post('/login')
     @ApiOperation({summary:'login a user'})
     @ApiBody({
