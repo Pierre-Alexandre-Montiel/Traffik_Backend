@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class SizeDto {
+export class AddProjectToUserParams {
   @IsNotEmpty()
   @IsString()
-  size: string;
   id: string;
+  projectId: string;
 }

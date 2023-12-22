@@ -1,5 +1,5 @@
-import { Body, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { UserLog } from '../users/models/Login';
 import { LoginDto } from './dto/login';
 import * as bcrypt from 'bcrypt';
@@ -35,9 +35,9 @@ export class OauthService {
     return jwt_token;
   }
 
-  async findUser(body: any) {
-    return await this.prisma.user.findFirst();
-  }
+  // async findUser(body: any) {
+  //   return await this.prisma.user.findFirst();
+  // }
 
   async findOne(email: string) {
     return await this.prisma.user.findFirst({
@@ -67,14 +67,14 @@ export class OauthService {
     return null;
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.email };
-    console.log('Payload email = ', payload.email);
-    console.log('Payload id = ', payload.sub);
+  async login(user: any, body: any) {
+    const payload = { email: user.email, sub: user.id };
+    const res = await this.validateUser(body.email, body.password);
     return {
       access_token: this.jwtService.sign(payload, {
         secret: process.env.SECRET_JWT,
       }),
+      user: res,
     };
   }
 }

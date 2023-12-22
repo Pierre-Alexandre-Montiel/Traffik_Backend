@@ -1,8 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class SizeDto {
+export class BrandDto {
   @IsNotEmpty()
   @IsString()
-  size: string;
-  id: string;
+  name: string;
 }

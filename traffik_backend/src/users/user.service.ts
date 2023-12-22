@@ -1,41 +1,179 @@
-import { Body, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  Body,
+  Injectable,
+  Post,
+  Patch,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { UserLog } from './models/Login';
 import { LoginDto } from '../auth/dto/login';
 import * as bcrypt from 'bcrypt';
-import { ProjectDto } from './dto/projects';
+import { ProjectDto } from './models/dto/projects';
+import { TalentDto } from './models/dto/talent';
+import { AddTalentToProjectParams } from './interface/talent/addTalentToProject';
+import { AddItemsToProjectParams } from './interface/project/addItemsToProject';
+import { CreateTalentParams } from './interface/talent/createTalent';
+import { CreateUserParams } from './interface/user/CreateUser';
+import { CreateProjectParams } from './interface/project/createProject';
+import { AddProjectToUserParams } from './interface/project/addProjectToUser';
+import { UpdateUserProfileParams } from './interface/user/updateUserProfile';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async createUser(body: any): Promise<LoginDto> {
-    const response = (await body) as LoginDto;
-    const salt = await bcrypt.genSalt();
-    const pwd = response.password;
-    response.password = await bcrypt.hash(pwd, salt);
-    return await this.prisma.user.create({ data: response });
+  //##### USER LOGIC ######
+
+  @Post('createUser')
+  async createUser(body: CreateUserParams): Promise<LoginDto> {
+    try {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(body.password, salt);
+      const response: LoginDto = { ...body, password: hashedPassword };
+      return await this.prisma.user.create({ data: response });
+    } catch (error) {
+      throw new Error('Unable to create user.');
+    }
   }
 
-  async updateProfile(id: string, body) {
-    const user = await this.prisma.user.update({
+  @Patch('updateProfile/:id')
+  async updateProfile(id: string, body: UpdateUserProfileParams) {
+    try {
+      const user = await this.prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          email: body.email,
+          firstName: body.firstName,
+          lastName: body.lastName,
+        },
+      });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found.`);
+      }
+      return user;
+    } catch (error) {
+      throw new Error('Unable to update user profile.');
+    }
+  }
+
+  //#### STYLIST LOGIC #####
+
+  async createStylist(body: any): Promise<LoginDto> {
+    try {
+      const response = (await body) as LoginDto;
+      const salt = await bcrypt.genSalt();
+      const pwd = response.password;
+      response.password = await bcrypt.hash(pwd, salt);
+      return await this.prisma.user.create({ data: response });
+    } catch (error) {
+      throw new Error('Unable to create stylist profile.');
+    }
+  }
+
+  //#### TALENT LOGIC #####
+
+  async createTalent(body: CreateTalentParams): Promise<TalentDto> {
+    try {
+      return await this.prisma.talents.create({ data: body });
+    } catch (error) {
+      throw new Error('Unable to create talent.');
+    }
+  }
+
+  async addTalentToProject(body: AddTalentToProjectParams) {
+    try {
+      const project = await this.prisma.project.update({
+        where: {
+          id: body.projectId,
+        },
+        data: {
+          Talent: { connect: { id: body.talentId } },
+        },
+      });
+      if (!project) {
+        throw new NotFoundException(
+          `Project with ID ${body.projectId} not found.`,
+        );
+      }
+      return project;
+    } catch (error) {
+      throw new Error('Unable to add talent to the project.');
+    }
+  }
+
+  async deleteTalentOfProject(body: AddTalentToProjectParams) {
+    try {
+      const project = await this.prisma.project.deleteMany({
+        where: {
+          projectId: body.projectId,
+          talentId: body.talentId,
+        },
+      });
+      if (!project) {
+        throw new NotFoundException(
+          `Project with ID ${body.projectId} not found.`,
+        );
+      }
+      return project;
+    } catch (error) {
+      throw new Error('Unable to add talent to the project.');
+    }
+  }
+
+  //#### PROJECT LOGIC ######
+
+  async createProject(body: CreateProjectParams): Promise<ProjectDto> {
+    try {
+      return await this.prisma.project.create({ data: body });
+    } catch (error) {
+      throw new Error('Unable to create project.');
+    }
+  }
+
+  async addProjectItem(body: AddItemsToProjectParams) {
+    try {
+      const project = await this.prisma.project.update({
+        where: {
+          id: body.id,
+        },
+        data: {
+          items: { connect: { barcode: body.barcode } },
+        },
+      });
+      if (!project) {
+        throw new NotFoundException(`Project with ID ${body.id} not found.`);
+      }
+      return project;
+    } catch (error) {
+      throw new Error('Unable to add item to project.');
+    }
+  }
+
+  async addProjectToUser(body: AddProjectToUserParams) {
+    const project = await this.prisma.user.update({
       where: {
-        id: id,
+        id: body.id,
       },
       data: {
-         email: body.email,
-         firstName: body.firstName,
-         lastName: body.lastName,
-        }
+        Project: { connect: { id: body.projectId } },
+      },
     });
-    if (user)
-      return user;
+    if (project) return project;
     return null;
   }
 
-  async createProject(body: any): Promise<ProjectDto> {
-    const response = (await body) as ProjectDto;
-    return await this.prisma.project.create({ data: response });
+  async getProjectItems(id: string) {
+    const items = await this.prisma.project.findUnique({
+      where: {
+        id: id,
+      },
+      include: { items: true },
+    });
+    if (items.items) return items.items;
+    return null;
   }
 
   async findUser(body: any) {
@@ -50,10 +188,10 @@ export class UserService {
     });
   }
 
-  async allProjectsById(id: string) {
+  async allProjectsById(id) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: id,
+        id: id.id,
       },
       include: { Project: true },
     });
@@ -62,6 +200,28 @@ export class UserService {
     return null;
   }
 
+  async getProjectById(id1: string, id2: string) {
+    const project = await this.prisma.project.findUnique({
+      where: {
+        id: id2,
+      },
+      include: {
+        User: {
+          where: {
+            id: id1,
+          },
+        },
+      },
+    });
+    if (project != undefined) {
+      console.log('PROJECT = ', project);
+      return project;
+    }
+    return null;
+  }
+
+  //##### WISHLISt LOGIC #####
+
   async getUserWhishlist(id: string) {
     const user = await this.prisma.wishlist.findMany({
       where: {
@@ -69,20 +229,29 @@ export class UserService {
       },
       include: { product: true },
     });
-    if (user != undefined) 
-      return user;
+    if (user != undefined) return user;
     return null;
   }
 
-  async updateWhishlist(id: string, body:any) {
-    const user = await this.prisma.wishlist.create({
+  async updateWhishlist(userId: string, itemId: string) {
+    const wish = await this.prisma.wishlist.create({
       data: {
-        userId: body,
-        productId: id,
-      }
+        userId: userId,
+        productId: itemId,
+      },
     });
-    if (user)
-      return user;
+    if (wish) return wish;
+    return null;
+  }
+
+  async deleteWhishlistItem(userId: string, itemId: string) {
+    const wish = await this.prisma.wishlist.deleteMany({
+      where: {
+        userId: userId,
+        productId: itemId,
+      },
+    });
+    if (wish) return wish;
     return null;
   }
 }

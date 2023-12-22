@@ -1,15 +1,9 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
-  Header,
-  Headers,
-  Param,
   Post,
   Request,
-  Res,
-  UploadedFile,
   UseGuards,
 } from '@nestjs/common';
 import { OauthService } from './auth.service';
@@ -71,13 +65,13 @@ export class OauthController {
   })
   async createUser(@Body() body) {
     try {
-      if (body) console.log('email', body.email);
-      console.log('password', body.password);
-      const user = await this.authservice.createUser(body);
-      return {
-        code: 200,
-        user: user,
-      };
+      if (body) {
+        const user = await this.authservice.createUser(body);
+        return {
+          code: 200,
+          user: user,
+        };
+      }
     } catch (error) {
       console.log(error);
       return { code: 500 };
@@ -135,10 +129,10 @@ export class OauthController {
       },
     },
   })
-  async login(@Request() req) {
+  async login(@Request() req, @Body() body) {
     try {
       if (req) {
-        const token = await this.authservice.login(req.user);
+        const token = await this.authservice.login(req.user, body);
         return { code: 200, token };
       }
     } catch (error) {

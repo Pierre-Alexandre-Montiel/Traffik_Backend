@@ -12,99 +12,103 @@ model User {
   email        String?     @unique
   firstName    String?
   lastName     String?
-  userStatusId String?        @unique
-  userTypeId   String?        @unique
+  userStatusId String?     @unique
+  userTypeId   String?     @unique
   phone        String?
   instagram    String?
   tiktok       String?
-  positionId   String?        @unique
+  positionId   String?     @unique
   password     String?
   updatedAt    DateTime?   @updatedAt
   createdAt    DateTime?   @default(now())
-  membershipId String?       @unique
-  wishlist      Wishlist[]
+  membershipId String?     @unique
   address      Address[]
   client       Client[]
-  company      Company?
+  //company      Company?
   Contract     Contract?
-  Project      Project[]
   Whishlist    Item[]
+  Project      Project[]
+  showroom     Showroom?
+  stylist      Stylist?
+  admin        Admin?
   membership   Membership? @relation(fields: [membershipId], references: [id])
   position     Position?   @relation(fields: [positionId], references: [id])
   userStatus   UserStatus? @relation(fields: [userStatusId], references: [id])
   userType     UserType?   @relation(fields: [userTypeId], references: [id])
+  wishlist     Wishlist[]
+}
+
+model Showroom {
+  id     String  @id @default(uuid())
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
+model Stylist {
+  id     String  @id @default(uuid())
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
+model Admin {
+  id     String  @id @default(uuid())
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id])
 }
 
 model UserStatus {
-  id        String      @id @default(uuid())
+  id         String          @id @default(uuid())
   userStatus userStatusList?
   User       User?
 }
 
 model UserType {
-  id        String      @id @default(uuid())
+  id       String        @id @default(uuid())
   userType userTypeList?
   user     User?
 }
 
-model Company {
-  id           String      @id @default(uuid())
-  company      String?      @unique
-  employeeId   String?         @unique
-  createdAt    DateTime?    @default(now())
-  addresses    Address[]
-  client       Client[]     @relation("provider")
-  employee     User?        @relation(fields: [employeeId], references: [id])
-  contract     Contract[]
-  itemBrand    Item[]       @relation("ItemBrand")
-  itemShowroom Item[]       @relation("ItemShowroom")
-  membership   Membership[]
-  team         Position[]
-  //project      Project[]
-}
-
 model Membership {
-  id        String      @id @default(uuid())
+  id             String         @id @default(uuid())
   membershipType MembershipType
-  companyId     String?
-  company        Company?       @relation(fields: [companyId], references: [id])
+  companyId      String?
+  //company        Company?       @relation(fields: [companyId], references: [id])
   member         User?
 }
 
 model Contract {
-  id        String      @id @default(uuid())
+  id        String    @id @default(uuid())
   legalName String?   @unique
   startDate DateTime
   endDate   DateTime
   companyId String?
-  memberId  String?      @unique
-  addressId String?      @unique
+  memberId  String?   @unique
+  addressId String?   @unique
   createdAt DateTime? @default(now())
   address   Address?  @relation(fields: [addressId], references: [id])
-  company   Company?  @relation(fields: [companyId], references: [id])
+  //company   Company?  @relation(fields: [companyId], references: [id])
   member    User?     @relation(fields: [memberId], references: [id])
 }
 
 model Position {
-  id        String      @id @default(uuid())
+  id        String        @id @default(uuid())
   position  PositionType?
   companyId String?
-  company   Company?      @relation(fields: [companyId], references: [id])
+  //company   Company?      @relation(fields: [companyId], references: [id])
   User      User?
 }
 
 model Client {
-  id        String      @id @default(uuid())
+  id         String    @id @default(uuid())
   talentId   String?
   providerId String?
   createdAt  DateTime? @default(now())
   talent     User?     @relation(fields: [talentId], references: [id])
-  provider   Company?  @relation("provider", fields: [providerId], references: [id], map: "provider_providerId_fkey")
-  //project    Project[]
+  // provider   Company?  @relation("provider", fields: [providerId], references: [id], map: "provider_providerId_fkey")
 }
 
 model Address {
-  id        String      @id @default(uuid())
+  id        String    @id @default(uuid())
   address1  String?
   address2  String?
   city      String?
@@ -114,59 +118,91 @@ model Address {
   userId    String?
   companyId String?
   createdAt DateTime? @default(now())
-  company   Company?  @relation(fields: [companyId], references: [id])
+  // company   Company?  @relation(fields: [companyId], references: [id])
   user      User?     @relation(fields: [userId], references: [id])
   contract  Contract?
 }
 
 model Project {
-  id        String      @id @default(uuid())
-  //projectStatus ProjectStatus
-  event         String
-  stylistId     String?
-  //talentId      Int?
-  //loanDate      DateTime
-  //fittingDate   DateTime?
-  //eventDate     DateTime?
-  //returnDate    DateTime
-  //pullId        Int?          @unique
-  //rating        Int?
-  //companyId     Int?
-  //createdAt     DateTime?     @default(now())
-  //Company       Company?      @relation(fields: [companyId], references: [id])
-  //pull          Pull?         @relation(fields: [pullId], references: [id])
-  stylist       User?         @relation(fields: [stylistId], references: [id])
-  //talent        Client?       @relation(fields: [talentId], references: [id])
+  id        String  @id @default(uuid())
+  event     String
+  projectId String?
+  userId    String?
+  talentId   String?
+  items     Item?   @relation(fields: [projectId], references: [barcode])
+  User      User?   @relation(fields: [userId], references: [id])
+  Talent    Talents?   @relation(fields: [talentId], references: [id])
+}
+
+model Talents {
+  id        String   @id @default(uuid())
+  firtsName String
+  lastName  String
+  email     String
+  tiktok    String
+  project  Project[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Item {
   id               String        @id @default(uuid())
-  barcode           String?     @unique 
+  barcode          String?       @unique
   createdAt        DateTime      @default(now())
   brandId          String?
   showroomId       String?
-  UserId            String?
-  collectionId     String?         @unique
+  UserId           String?
+  collectionId     String?       @unique
   season           String?
   style            String?
-  typeId           String?          
-  size             String?
+  typeId           String?
   color            String?
   location         String?
   availabilityId   Int?          @unique
   condition        Int?
   comment          String?
   replacementValue String?
-  picture          Pictures[]
-  wishlist         Wishlist[]
   retailValue      Int?
+  whishlist        User?         @relation(fields: [UserId], references: [id])
   availability     Availability? @relation(fields: [availabilityId], references: [id])
-  brand            Company?      @relation("ItemBrand", fields: [brandId], references: [id])
+  //brand            Brand?      @relation("branding", fields: [brandId], references: [id])
   collection       Collection?   @relation(fields: [collectionId], references: [id])
-  showroom         Company?      @relation("ItemShowroom", fields: [showroomId], references: [id])
-  whishlist         User?      @relation(fields: [UserId], references: [id])
-//  type             Type?         @relation(fields: [typeId], references: [id])
+  //showroom         Company?      @relation("ItemShowroom", fields: [showroomId], references: [id])
+  picture          Pictures[]
+  project          Project[]
   pull             Pull[]
+  sizes            Sizes[]
+  stocks           Stock[]
+  wishlist         Wishlist[]
+  Brand            Brand[]
+}
+
+model Brand {
+  id      String @id @default(uuid())
+  name    String
+  brandId String?
+  items   Item?  @relation(fields: [brandId], references: [barcode])
+}
+
+model Pictures {
+  id        String @id @default(uuid())
+  filename  String
+  articleId String
+  item      Item   @relation(fields: [articleId], references: [barcode])
+}
+
+model Sizes {
+  id        String @id @default(uuid())
+  nom       String
+  articleId String
+  item      Item   @relation(fields: [articleId], references: [barcode])
+}
+
+model Stock {
+  id        String @id @default(uuid())
+  quantite  Int
+  articleId String
+  item      Item   @relation(fields: [articleId], references: [barcode])
 }
 
 model Wishlist {
@@ -175,34 +211,27 @@ model Wishlist {
   productId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
   product   Item     @relation(fields: [productId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
-//model Sizes {
-//  id    String  @unique
-//  size  String
-//  itemId String  // Foreign key referencing Item
-//  item  Item    @relation(fields: [itemId], references: [id])
-//}
 
-model Pictures {
-  id        String      @id @default(uuid())
-  pics      String
-  link      Item?         @relation(fields: [id], references: [barcode])
+
+model Stylistes {
+  id        String   @id @default(uuid())
+  firtsName String
+  lastName  String
+  email     String
+  phone     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Collection {
-  id        String      @id @default(uuid())
+  id         String          @id @default(uuid())
   collection collectionList?
   Item       Item?
 }
-
-//model Type {
-//  id        String      @id @default(uuid())
-//  type typeList
-//  Item Item?
-//}
 
 model Availability {
   id           Int              @id @default(autoincrement())
@@ -214,13 +243,12 @@ model Pull {
   id         Int          @id @default(autoincrement())
   barcodeId  String?
   createdAt  DateTime?    @default(now())
-  //Project    Project?
   idItem     Item?        @relation(fields: [barcodeId], references: [id])
   PullUpdate PullUpdate[]
 }
 
 model PullUpdate {
-  id        String      @id @default(uuid())
+  id        String    @id @default(uuid())
   pullId    Int?
   ready     Int?
   out       Int?
@@ -232,7 +260,7 @@ model PullUpdate {
 }
 
 model Lambda {
-  id        String      @id @default(uuid())
+  id        String    @id @default(uuid())
   updatedAt DateTime? @updatedAt
   createdAt DateTime? @default(now())
 }

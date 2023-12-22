@@ -43,6 +43,30 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Showroom" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT,
+
+    CONSTRAINT "Showroom_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Stylist" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT,
+
+    CONSTRAINT "Stylist_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Admin" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT,
+
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "UserStatus" (
     "id" TEXT NOT NULL,
     "userStatus" "userStatusList",
@@ -56,16 +80,6 @@ CREATE TABLE "UserType" (
     "userType" "userTypeList",
 
     CONSTRAINT "UserType_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Company" (
-    "id" TEXT NOT NULL,
-    "company" TEXT,
-    "employeeId" TEXT,
-    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Company_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -130,9 +144,24 @@ CREATE TABLE "Address" (
 CREATE TABLE "Project" (
     "id" TEXT NOT NULL,
     "event" TEXT NOT NULL,
-    "stylistId" TEXT,
+    "projectId" TEXT,
+    "userId" TEXT,
+    "talentId" TEXT,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Talents" (
+    "id" TEXT NOT NULL,
+    "firtsName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "tiktok" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Talents_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -147,7 +176,6 @@ CREATE TABLE "Item" (
     "season" TEXT,
     "style" TEXT,
     "typeId" TEXT,
-    "size" TEXT,
     "color" TEXT,
     "location" TEXT,
     "availabilityId" INTEGER,
@@ -157,6 +185,42 @@ CREATE TABLE "Item" (
     "retailValue" INTEGER,
 
     CONSTRAINT "Item_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Brand" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "brandId" TEXT,
+
+    CONSTRAINT "Brand_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Pictures" (
+    "id" TEXT NOT NULL,
+    "filename" TEXT NOT NULL,
+    "articleId" TEXT NOT NULL,
+
+    CONSTRAINT "Pictures_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Sizes" (
+    "id" TEXT NOT NULL,
+    "nom" TEXT NOT NULL,
+    "articleId" TEXT NOT NULL,
+
+    CONSTRAINT "Sizes_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Stock" (
+    "id" TEXT NOT NULL,
+    "quantite" INTEGER NOT NULL,
+    "articleId" TEXT NOT NULL,
+
+    CONSTRAINT "Stock_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -171,11 +235,16 @@ CREATE TABLE "Wishlist" (
 );
 
 -- CreateTable
-CREATE TABLE "Pictures" (
+CREATE TABLE "Stylistes" (
     "id" TEXT NOT NULL,
-    "pics" TEXT NOT NULL,
+    "firtsName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Pictures_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Stylistes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -242,10 +311,13 @@ CREATE UNIQUE INDEX "User_positionId_key" ON "User"("positionId");
 CREATE UNIQUE INDEX "User_membershipId_key" ON "User"("membershipId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Company_company_key" ON "Company"("company");
+CREATE UNIQUE INDEX "Showroom_userId_key" ON "Showroom"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Company_employeeId_key" ON "Company"("employeeId");
+CREATE UNIQUE INDEX "Stylist_userId_key" ON "Stylist"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Admin_userId_key" ON "Admin"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Contract_legalName_key" ON "Contract"("legalName");
@@ -278,61 +350,61 @@ ALTER TABLE "User" ADD CONSTRAINT "User_userStatusId_fkey" FOREIGN KEY ("userSta
 ALTER TABLE "User" ADD CONSTRAINT "User_userTypeId_fkey" FOREIGN KEY ("userTypeId") REFERENCES "UserType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Company" ADD CONSTRAINT "Company_employeeId_fkey" FOREIGN KEY ("employeeId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Showroom" ADD CONSTRAINT "Showroom_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Membership" ADD CONSTRAINT "Membership_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Stylist" ADD CONSTRAINT "Stylist_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Admin" ADD CONSTRAINT "Admin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Contract" ADD CONSTRAINT "Contract_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Position" ADD CONSTRAINT "Position_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Client" ADD CONSTRAINT "Client_talentId_fkey" FOREIGN KEY ("talentId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Client" ADD CONSTRAINT "provider_providerId_fkey" FOREIGN KEY ("providerId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Address" ADD CONSTRAINT "Address_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Address" ADD CONSTRAINT "Address_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Project" ADD CONSTRAINT "Project_stylistId_fkey" FOREIGN KEY ("stylistId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Project" ADD CONSTRAINT "Project_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Item"("barcode") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Item" ADD CONSTRAINT "Item_availabilityId_fkey" FOREIGN KEY ("availabilityId") REFERENCES "Availability"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Project" ADD CONSTRAINT "Project_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Item" ADD CONSTRAINT "Item_brandId_fkey" FOREIGN KEY ("brandId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Item" ADD CONSTRAINT "Item_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "Collection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Item" ADD CONSTRAINT "Item_showroomId_fkey" FOREIGN KEY ("showroomId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Project" ADD CONSTRAINT "Project_talentId_fkey" FOREIGN KEY ("talentId") REFERENCES "Talents"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Item" ADD CONSTRAINT "Item_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Wishlist" ADD CONSTRAINT "Wishlist_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Item" ADD CONSTRAINT "Item_availabilityId_fkey" FOREIGN KEY ("availabilityId") REFERENCES "Availability"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Item" ADD CONSTRAINT "Item_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "Collection"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Brand" ADD CONSTRAINT "Brand_brandId_fkey" FOREIGN KEY ("brandId") REFERENCES "Item"("barcode") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Pictures" ADD CONSTRAINT "Pictures_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Sizes" ADD CONSTRAINT "Sizes_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Stock" ADD CONSTRAINT "Stock_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Wishlist" ADD CONSTRAINT "Wishlist_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pictures" ADD CONSTRAINT "Pictures_id_fkey" FOREIGN KEY ("id") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Wishlist" ADD CONSTRAINT "Wishlist_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pull" ADD CONSTRAINT "Pull_barcodeId_fkey" FOREIGN KEY ("barcodeId") REFERENCES "Item"("id") ON DELETE SET NULL ON UPDATE CASCADE;

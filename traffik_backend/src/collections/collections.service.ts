@@ -1,22 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { ItemsDto } from 'src/collections/dto/items';
+import { PrismaService } from '../prisma/prisma.service';
 import * as fs from 'fs';
 import * as csv from 'fast-csv';
 import axios from 'axios';
-import { SizeDto } from './dto/size';
-import { Prisma } from '@prisma/client';
-import { randomUUID } from 'crypto';
-
-interface Item {
-    barecode: string,
-    season: string,
-    style:string, 
-    typeId: string,
-    color: string,
-    location: string,
-    replacementValue: string,
-  };
+import { ItemsDto } from './dto/items';
+import { BrandDto } from './dto/brand';
 
 @Injectable()
 export class CollectionsService {
@@ -40,21 +28,29 @@ export class CollectionsService {
       },
     });
   }
-  /*async createItems(body): Promise<ItemsDto> {
-    const response = (await body) as ItemsDto;
-    return await this.prisma.item.create({ data: response });
-  }*/
 
-  async uploadItemsImages(filePath:string){
+  async createItem(body: ItemsDto): Promise<ItemsDto> {
+    return await this.prisma.item.create({ data: body });
+  }
+
+  async createItems(body: ItemsDto): Promise<ItemsDto> {
+    return await this.prisma.item.create({ data: body });
+  }
+
+  async createBrand(body: BrandDto): Promise<BrandDto> {
+    return await this.prisma.brand.create({ data: body });
+  }
+
+  async uploadItemsImages(filePath: string) {
     const stream = fs.createReadStream(filePath);
-    let i = 0;
-    const csvStream = csv.parse({ headers: true })
+    const csvStream = csv
+      .parse({ headers: true })
       .on('data', async (res) => {
         await this.prisma.pictures.create({
           data: {
-            pics: process.env.IMG + res.barcode + ".jpg",
+            filename: process.env.IMG + res.barcode + '.jpg',
             // Use connect to reference the Item by its barcode
-            link: { connect: { barcode: res.barcode } },
+            item: { connect: { barcode: res.barcode } },
           },
         });
       })
@@ -65,18 +61,18 @@ export class CollectionsService {
         console.error('Error processing CSV file:', error);
         throw error;
       });
-    stream.pipe(csvStream); 
-  
+    stream.pipe(csvStream);
   }
 
   async importProductsFromCsv(filePath: string): Promise<void> {
     const stream = fs.createReadStream(filePath);
-    let i = 0;
-    const csvStream = csv.parse({ headers: true })
+    const i = 0;
+    const csvStream = csv
+      .parse({ headers: true })
       .on('data', async (res) => {
         // Assuming your CSV columns match your Product model fields
         //const infos = await res as ItemsDto;
-        console.log("RES = ", res)
+        console.log('RES = ', res);
         await this.prisma.item.create({ data: res });
       })
       .on('end', () => {
@@ -90,20 +86,22 @@ export class CollectionsService {
   }
 
   async downloadFileFromGoogleDrive(destination: string): Promise<void> {
-      console.log("Download");
-    const response = await axios.get(process.env.SHEET, { responseType: 'arraybuffer' });
+    console.log('Download');
+    const response = await axios.get(process.env.SHEET, {
+      responseType: 'arraybuffer',
+    });
 
     fs.writeFileSync(destination, Buffer.from(response.data));
   }
 
   async searchRequest(body) {
     return await this.prisma.item.findMany({
-        where: {
-          OR: [
-            { style: { contains: body.query, mode: 'insensitive' } },
-           // { description: { contains: body.query, mode: 'insensitive' } },
-          ],
-        },
-      });
+      where: {
+        OR: [
+          { style: { contains: body.query, mode: 'insensitive' } },
+          // { description: { contains: body.query, mode: 'insensitive' } },
+        ],
+      },
+    });
   }
 }
