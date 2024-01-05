@@ -10,10 +10,8 @@
 
 :star:
 
-[Aimeos](https://aimeos.org/TYPO3) is THE professional, full-featured and
-high performance e-commerce extension for TYPO3!  You can install it in your
-existing TYPO3 web site within 5 minutes and can adapt, extend, overwrite
-and customize anything to your needs.
+[TRAFFIK ](https://aimeos.org/TYPO3) is THE professional, full-featured and
+high performance plateform for stylist and brands!
 
 ![aimeos-frontend](https://user-images.githubusercontent.com/8647429/212348410-55cbaa00-722a-4a30-8b57-da9e173e0675.jpg)
 
