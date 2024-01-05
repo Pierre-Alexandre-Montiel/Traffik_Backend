@@ -4,6 +4,7 @@ import {
   Post,
   Patch,
   NotFoundException,
+  Delete,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserLog } from './models/Login';
@@ -59,6 +60,23 @@ export class UserService {
     }
   }
 
+  @Delete('deleteProfile/:id')
+  async deleteProfile(id: string) {
+    try {
+      const user = await this.prisma.user.delete({
+        where: {
+          id: id,
+        },
+      });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found.`);
+      }
+      return user;
+    } catch (error) {
+      console.log(error)
+      throw new Error('Unable to delete user profile.');
+    }
+  }
   //#### STYLIST LOGIC #####
 
   async createStylist(body: any): Promise<LoginDto> {
@@ -223,18 +241,25 @@ export class UserService {
   //##### WISHLISt LOGIC #####
 
   async getUserWhishlist(id: string) {
-    const user = await this.prisma.wishlist.findMany({
-      where: {
-        userId: id,
-      },
-      include: { product: true },
-    });
-    if (user != undefined) return user;
-    return null;
+    const user = await this.findOne(id)
+    if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found.`);
+      }
+    try{
+      const wish = await this.prisma.wishlist.findMany({
+        where: {
+          userId: id,
+        },
+        include: { product: true },
+      });
+      return wish;
+    } catch (error) {
+      throw new Error('Unable to get wishlist.');
+    }
   }
 
   async updateWhishlist(userId: string, itemId: string) {
-    const wish = await this.prisma.wishlist.create({
+    const wish = await this.prisma.wishlist.createMany({
       data: {
         userId: userId,
         productId: itemId,

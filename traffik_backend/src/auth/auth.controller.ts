@@ -73,7 +73,6 @@ export class OauthController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }

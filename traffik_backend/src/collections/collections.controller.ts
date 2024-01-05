@@ -6,8 +6,11 @@ import {
   Post,
   Request,
   UseGuards,
+  ValidationPipe,
+  UsePipes,
+  HttpStatus
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt_strategy/jwt-auth.guard';
 
 @ApiTags('Collections Routes')
@@ -15,40 +18,20 @@ import { JwtAuthGuard } from '../auth/jwt_strategy/jwt-auth.guard';
 export class CollectionsController {
   constructor(private collecservice: CollectionsService) {}
 
-  @UseGuards(JwtAuthGuard)
+  //@UseGuards(JwtAuthGuard)
   @Get('/items')
   @ApiOperation({ summary: 'get all items' })
   @ApiResponse({
-    status: 200,
-    description: 'all items',
-    schema: {
-      type: 'object',
-      properties: {
-        code: {
-          type: 'int',
-          example: '200',
-          description: 'All Items sucess',
-        },
-        items: {
-          type: 'object',
-        },
-      },
-    },
+    status: HttpStatus.OK,
+    description: 'Items`` retrieved successfully',
+    //type: UserResponseDto,
   })
   @ApiResponse({
-    status: 500,
-    description: 'All Items not accessible',
-    schema: {
-      type: 'object',
-      properties: {
-        code: {
-          type: 'int',
-          example: '500',
-          description: 'Items unsucess',
-        },
-      },
-    },
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error',
   })
+  //@UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, validateCustomDecorators: true }))
   async getItems(@Request() req) {
     try {
       if (req) {

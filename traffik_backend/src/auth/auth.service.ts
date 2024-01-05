@@ -59,10 +59,12 @@ export class OauthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.findOne(email);
-    const res = bcrypt.compare(password, user.password);
-    if (user && res) {
-      const { password, ...rest } = user;
-      return rest;
+    if (user) {
+      const res = bcrypt.compare(password, user.password);
+      if (user && res) {
+        const { password, ...rest } = user;
+        return rest;
+      }
     }
     return null;
   }

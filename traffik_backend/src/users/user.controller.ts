@@ -8,10 +8,15 @@ import {
   Put,
   Delete,
   HttpStatus,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt_strategy/jwt-auth.guard';
+import { UpdateUserProfileParams } from './interface/user/updateUserProfile';
+import { ParamsDto } from './models/dto/params';
+import { ProjectDto } from './models/dto/projects';
 //import { Auth } from '../roles/roles_decorators';
 
 @ApiTags('Users Routes')
@@ -21,9 +26,21 @@ export class UserController {
 
   // ##### USER LOGIC #####
 
-  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get user profile by ID' })
+  @ApiParam({ name: 'id', description: 'User ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User profile retrieved successfully',
+    //type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error',
+  })
+  //@UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, validateCustomDecorators: true }))
   @Get('/profile/:id')
-  async getProfile(@Param() id) {
+  async getProfile(@Param() id: ParamsDto) {
     const user = await this.userservice.findOne(id.id);
     if (user) {
       return { code: HttpStatus.OK, user: user };
@@ -32,62 +49,119 @@ export class UserController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Post('/profile/:id')
-  // async profileUpdate(@Param() id, @Body() body) {
-  //   const user = await this.userservice.updateProfile(id, body);
-  //   if (user) return { code: 200, user: user };
-  //   else return { code: 500 };
-  // }
-
   // A verifier
   //@UseGuards(JwtAuthGuard)
+  @UsePipes(
+    new ValidationPipe({ transform: true, validateCustomDecorators: true }),
+  )
   @Put('/profile/update/:id')
-  async updateUserInfos(@Param() id, @Body() body) {
+  async updateUserInfos(
+    @Param() id: ParamsDto,
+    @Body() body: UpdateUserProfileParams,
+  ) {
     const user = await this.userservice.updateProfile(id.id, body);
-    if (user) return { code: 200, user: user };
-    else return { code: 500 };
+    if (user) {
+      return { code: HttpStatus.OK, user: user };
+    } else {
+      return { code: HttpStatus.INTERNAL_SERVER_ERROR };
+    }
+  }
+
+  @UsePipes(
+    new ValidationPipe({ transform: true, validateCustomDecorators: true }),
+  )
+  @Delete('/profile/delete/:id')
+  async deleteUser(@Param() id: ParamsDto) {
+    const user = await this.userservice.deleteProfile(id.id);
+    if (user) {
+      return { code: HttpStatus.OK, user: user };
+    } else {
+      return { code: HttpStatus.INTERNAL_SERVER_ERROR };
+    }
   }
 
   // ##### WISHLIST LOGIC ######
 
   @ApiTags('Wishlist Routes')
-  @UseGuards(JwtAuthGuard)
-  @Get('/profile/whishlist/:id')
-  async getWhishlist(@Param() id) {
+  @ApiOperation({ summary: 'Get user wishlist by ID' })
+  @ApiParam({ name: 'id', description: 'User ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Wishlist retrieved successfully',
+    //type: WishlistResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error',
+  })
+  //@UseGuards(JwtAuthGuard)
+  @UsePipes(
+    new ValidationPipe({ transform: true, validateCustomDecorators: true }),
+  )
+  @Get('/profile/wishlist/:id')
+  async getWhishlist(@Param() id: ParamsDto) {
     const wish = await this.userservice.getUserWhishlist(id.id);
-    if (wish) return { code: 200, whishlist: wish };
-    else return { code: 500 };
+    if (wish) {
+      return { code: HttpStatus.OK, wish: wish };
+    } else {
+      return { code: HttpStatus.INTERNAL_SERVER_ERROR };
+    }
   }
 
   @ApiTags('Wishlist Routes')
-  @UseGuards(JwtAuthGuard)
-  @Post('/profile/:userId/whishlist/:itemId')
-  async addWhishlist(@Param() userId, @Param() itemId) {
+  //@UseGuards(JwtAuthGuard)
+  @UsePipes(
+    new ValidationPipe({ transform: true, validateCustomDecorators: true }),
+  )
+  @Post('/profile/:userId/wishlist/:itemId')
+  async addWhishlist(@Param() userId: ParamsDto, @Param() itemId: ParamsDto) {
     const wish = await this.userservice.updateWhishlist(userId.id, itemId.id);
-    if (wish) return { code: 200, whishlist: wish };
-    else return { code: 500 };
+    if (wish) {
+      return { code: HttpStatus.OK, wish: wish };
+    } else {
+      return { code: HttpStatus.INTERNAL_SERVER_ERROR };
+    }
   }
 
   @ApiTags('Wishlist Routes')
-  @UseGuards(JwtAuthGuard)
-  @Delete('/profile/:userId/whishlist/:itemId')
-  async deleteWhishlistItem(@Param() userId, @Param() itemId) {
+  //@UseGuards(JwtAuthGuard)
+  @UsePipes(
+    new ValidationPipe({ transform: true, validateCustomDecorators: true }),
+  )
+  @Delete('/profile/:userId/wishlist/:itemId')
+  async deleteWhishlistItem(
+    @Param() userId: ParamsDto,
+    @Param() itemId: ParamsDto,
+  ) {
     const wish = await this.userservice.deleteWhishlistItem(
       userId.id,
       itemId.id,
     );
-    if (wish) return { code: 200, whishlist: wish };
-    else return { code: 500 };
+    if (wish) {
+      return { code: HttpStatus.OK, wish: wish };
+    } else {
+      return { code: HttpStatus.INTERNAL_SERVER_ERROR };
+    }
   }
   // ##### PROJECT LOGIC #######
 
   @ApiTags('Project Routes')
+  @ApiOperation({ summary: 'Create a new project' })
+  @ApiBody({ type: ProjectDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Project created successfully',
+    //type: ProjectResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Internal server error',
+  })
   //@UseGuards(JwtAuthGuard)
   // mettre en place la logic de role + oauth
   //@Auth('admin')
   @Post('/create')
-  async createProjects(@Body() body) {
+  async createProjects(@Body() body:ProjectDto) {
     try {
       if (body) {
         const projects = await this.userservice.createProject(body);
@@ -97,8 +171,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log('ici');
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -107,7 +179,6 @@ export class UserController {
   @ApiTags('Project Routes')
   @Get('/getUserProjects/:id')
   async getUserProjects(@Param() id) {
-    console.log('ICI');
     try {
       if (id) {
         const projects = await this.userservice.allProjectsById(id);
@@ -117,7 +188,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -127,7 +197,6 @@ export class UserController {
   async getUserProject(@Param() id1, @Param() id2) {
     try {
       if (id1 && id2) {
-        console.log('PROJECT = ');
         const projects = await this.userservice.getProjectById(id1.id, id2.id);
         return {
           code: 200,
@@ -135,7 +204,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -153,7 +221,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -171,7 +238,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -189,7 +255,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -209,7 +274,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -229,7 +293,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }
@@ -247,7 +310,6 @@ export class UserController {
         };
       }
     } catch (error) {
-      console.log(error);
       return { code: 500 };
     }
   }

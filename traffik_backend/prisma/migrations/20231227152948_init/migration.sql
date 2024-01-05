@@ -183,6 +183,7 @@ CREATE TABLE "Item" (
     "comment" TEXT,
     "replacementValue" TEXT,
     "retailValue" INTEGER,
+    "sizes" TEXT,
 
     CONSTRAINT "Item_pkey" PRIMARY KEY ("id")
 );
@@ -203,15 +204,6 @@ CREATE TABLE "Pictures" (
     "articleId" TEXT NOT NULL,
 
     CONSTRAINT "Pictures_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Sizes" (
-    "id" TEXT NOT NULL,
-    "nom" TEXT NOT NULL,
-    "articleId" TEXT NOT NULL,
-
-    CONSTRAINT "Sizes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -393,9 +385,6 @@ ALTER TABLE "Brand" ADD CONSTRAINT "Brand_brandId_fkey" FOREIGN KEY ("brandId") 
 
 -- AddForeignKey
 ALTER TABLE "Pictures" ADD CONSTRAINT "Pictures_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Sizes" ADD CONSTRAINT "Sizes_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Stock" ADD CONSTRAINT "Stock_articleId_fkey" FOREIGN KEY ("articleId") REFERENCES "Item"("barcode") ON DELETE RESTRICT ON UPDATE CASCADE;

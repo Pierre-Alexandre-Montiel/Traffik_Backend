@@ -103,7 +103,7 @@ model Client {
   talentId   String?
   providerId String?
   createdAt  DateTime? @default(now())
-  talent     User?     @relation(fields: [talentId], references: [id])
+  talent     User?     @relation(fields: [talentId], references: [id], onDelete: Cascade)
   // provider   Company?  @relation("provider", fields: [providerId], references: [id], map: "provider_providerId_fkey")
 }
 
@@ -119,7 +119,7 @@ model Address {
   companyId String?
   createdAt DateTime? @default(now())
   // company   Company?  @relation(fields: [companyId], references: [id])
-  user      User?     @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   contract  Contract?
 }
 
@@ -130,7 +130,7 @@ model Project {
   userId    String?
   talentId   String?
   items     Item?   @relation(fields: [projectId], references: [barcode])
-  User      User?   @relation(fields: [userId], references: [id])
+  User      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Talent    Talents?   @relation(fields: [talentId], references: [id])
 }
 
@@ -163,7 +163,7 @@ model Item {
   comment          String?
   replacementValue String?
   retailValue      Int?
-  whishlist        User?         @relation(fields: [UserId], references: [id])
+  whishlist        User?         @relation(fields: [UserId], references: [id], onDelete: Cascade)
   availability     Availability? @relation(fields: [availabilityId], references: [id])
   //brand            Brand?      @relation("branding", fields: [brandId], references: [id])
   collection       Collection?   @relation(fields: [collectionId], references: [id])
@@ -171,7 +171,7 @@ model Item {
   picture          Pictures[]
   project          Project[]
   pull             Pull[]
-  sizes            Sizes[]
+  sizes            String?
   stocks           Stock[]
   wishlist         Wishlist[]
   Brand            Brand[]
@@ -191,12 +191,12 @@ model Pictures {
   item      Item   @relation(fields: [articleId], references: [barcode])
 }
 
-model Sizes {
-  id        String @id @default(uuid())
-  nom       String
-  articleId String
-  item      Item   @relation(fields: [articleId], references: [barcode])
-}
+//model Sizes {
+// id        String @id @default(uuid())
+//  nom       String
+//  articleId String
+//  item      Item   @relation(fields: [articleId], references: [barcode])
+//}
 
 model Stock {
   id        String @id @default(uuid())
@@ -212,7 +212,7 @@ model Wishlist {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   product   Item     @relation(fields: [productId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 
